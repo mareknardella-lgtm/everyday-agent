@@ -1,0 +1,76 @@
+{
+  "spending_threshold_eur": 50.0,
+  "digest_times": ["08:00", "19:00"],
+  "max_active_notifications_per_day": 3,
+  "family_members": [],
+  "preferred_providers": {},
+  "never_automate": [],
+  "notification_channel": "push",
+  "dnd_contexts": ["travel", "holiday", "family_weekend"],
+  "routing_rules": {},
+  "emergency_delegate": null,
+  "calibration_days": 14,
+  "calibration_extra_notifications": 2,
+  "data_retention_days": 90,
+  "legal_basis": "consent",
+  "third_party_sharing": false,
+  "seasonal_periods": [
+    {"name": "Dichiarazione dei redditi", "month": 5, "day": 31, "lead_days": 45},
+    {"name": "Rientro a scuola", "month": 9, "day": 1, "lead_days": 30},
+    {"name": "Rinnovi di fine anno", "month": 12, "day": 1, "lead_days": 45}
+  ],
+  "family_permissions": {
+    "owner": {"*": ["approve", "manage"]},
+    "partner": {"health": ["approve", "manage"], "family": ["approve"]},
+    "teen": {"errands": ["approve"]}
+  },
+  "never_do": [
+    "Non parlerò mai con un medico, avvocato o consulente senza supervisione diretta.",
+    "Non firmerò né accetterò mai contratti legalmente vincolanti in autonomia.",
+    "Non modificherò mai un testamento o altri documenti legali.",
+    "Non condividerò mai dati sanitari o finanziari senza il consenso del proprietario.",
+    "Non supererò mai i tetti massimi di spesa, indipendentemente dalla fiducia.",
+    "Non venderò né condividerò mai i tuoi dati per finalità commerciali.",
+    "Non sostituirò mai una relazione umana né userò un framing affettivo."
+  ],
+  "trust_baseline_score": 20.0,
+  "trust_auto_execute_score": 85.0,
+  "trust_report_score": 55.0,
+  "trust_max_spend_eur": 400.0,
+  "trust_decay_half_life_days": 365.0,
+  "trust_import_discount": 0.35,
+  "trust_sensitive_caps": {
+    "money": 60.0,
+    "health": 50.0,
+    "legal": 45.0,
+    "contract": 45.0,
+    "documents": 45.0,
+    "family_docs": 45.0
+  },
+  "autonomous_money_enabled": false,
+  "money_single_transaction_cap_eur": 100.0,
+  "money_monthly_cap_eur": 300.0,
+  "autonomy_consent_renewal_days": 180,
+  "audit_retention_days": 365,
+  "business_plan": "base",
+  "event_driven_monitoring": true,
+  "compute_cost_target_eur": 0.0,
+  "dependency_review_days": 180,
+  "insurance_or_guarantee": {
+    "enabled": false,
+    "provider": null,
+    "coverage_eur": 0.0,
+    "status": "da definire prima del deployment reale"
+  },
+  "domain_consents": {},
+  "integrations": {
+    "calendar": {"enabled": false, "scope": "personal_and_shared", "permissions": ["read", "create_events"]},
+    "email": {"enabled": false, "scope": "organize_only", "permissions": ["read", "label", "archive"]},
+    "bank": {"enabled": false, "scope": "read_only", "permissions": ["read_balances", "read_transactions"]},
+    "grocery": {"enabled": false, "scope": "authorized_lists", "permissions": ["read", "update"]},
+    "home": {"enabled": false, "scope": "authorized_devices", "permissions": ["read_status", "control"]},
+    "bookings": {"enabled": false, "scope": "draft_only", "permissions": ["search", "draft"]},
+    "health": {"enabled": false, "scope": "reminders_only", "permissions": ["read_reminders", "create_reminders"]},
+    "family_docs": {"enabled": false, "scope": "minimum_access", "permissions": ["read_deadlines"]}
+  }
+}
