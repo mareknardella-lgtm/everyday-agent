@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ — Everyday Agent</title>
+    <meta name="description" content="Answers about Everyday Agent: how the dynamic trust engine works, what data it accesses, how to disable autonomy, and how to control your privacy." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://everydayagent.com/site/faq/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="FAQ — Everyday Agent" />
+    <meta property="og:description" content="Answers about trust engine, data access, privacy, and how to control your agent." />
+    <meta property="og:url" content="https://everydayagent.com/site/faq/" />
+    <link rel="icon" type="image/svg+xml" href="/site/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/site/site-styles.css" />
+
+    <!-- FAQPage structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the Dynamic Trust Engine work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Dynamic Trust Engine assigns a continuous score from 0 to 100 for every combination of action, counterparty and context. New combinations start at 20/100 (cautious). Approvals increase the score, rejections decrease it, and hesitation keeps it low. The score decays over time if there are no interactions. Money, health and legal documents always have absolute safety caps."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does Everyday Agent handle at home?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The home domain organizes maintenance, utilities, supplies and warranty reminders. In this prototype it only stores local reminders; it does not contact contractors, place orders or control devices."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are payments and spending handled?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The prototype does not connect to banks or execute payments. A future money connector would require explicit confirmation, least-privilege access, transaction and monthly caps, audit records and a jurisdiction-specific review."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does the errands domain do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The errands domain organizes shopping lists, bookings and deliveries. In this prototype it stores local items only; real bookings, cancellations and external messages are not performed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if the agent makes a mistake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For local demo actions, the audit log records what happened, why, and the trust score at the time. Reversible local actions may have undo or correction controls; external or irreversible actions are not available in this demo. Responsibility, remediation, refunds, limitations and escalation must be defined in final Terms and applicable contracts. Do not rely on the prototype for consequential decisions."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who can see my health data?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In this local prototype, health-related reminder data is stored in the browser and is not sent to an external service by the demo. Do not enter real health information. A production service would need explicit consent, access controls, contracts and a lawful sharing process. The prototype only provides operational reminders, not clinical advice."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I disable autonomy at any time?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. You can set the agent to 'Always ask me' mode globally or per-domain at any time. This immediately overrides all trust scores and requires your explicit confirmation for every action, regardless of the trust level."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if I stop responding to notifications?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For every Level 3 notification, the agent shows what happens by default if you don't respond — for example, 'if you don't reply by Friday, the contract auto-renews at old terms.' This removes the anxiety of needing to respond immediately."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the agent contact external services?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In the current demo, no. Everything runs locally. When external integrations are connected (calendar, email, banking), the agent never sends payments, emails, or contracts without your explicit approval for that specific action. Health and legal data are never shared without explicit per-case consent."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the agent handle family permissions?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A permission matrix defines who can approve what. Teenagers cannot authorize spending. A partner may have full access to some domains and none to others (e.g., personal accounts). Routing rules can direct specific decisions to the most appropriate family member."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the calibration period?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "During the first 14 days, the agent notifies more than necessary to learn your real preferences. It tells you explicitly: 'I'm still calibrating, expect a few more notifications this week.' After this period, it reduces notifications as trust builds."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I see why the agent made a specific decision?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Every automatic action (Level 1) can be explained on demand. Ask 'why did you pay this bill without asking me?' and you get the exact rule, trust score, and context that was applied. Transparency is a core design principle."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens to my data if I stop using the agent?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can export the local demo state, pause the agent and delete browser data from the dashboard. A production offboarding process must define retention, legal holds, integration revocation, identity verification and ownership of open deadlines; this prototype is not a guarantee of deletion or handover."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Everyday Agent GDPR compliant?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The local prototype is not a legal certification and the production service is not yet deployed. It is designed around data minimization and local controls, but compliance depends on the final operator, processing activities, vendors, jurisdictions, contracts and controls. Qualified privacy counsel must review the actual launch before any compliance claim is made."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the agent negotiate with providers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In this demo, no. The demo runs locally and does not contact providers. Any future connector must be separately authorized, use least-privilege access and pass legal, security and provider review. The product will not claim that a planned connector is available until it is actually implemented and tested."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the hidden cost detector?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The agent identifies subscriptions and expenses you've stopped using (an app not opened for 3 months, a gym membership you never visit) and flags them in a dedicated monthly digest, so you notice before wasting money."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a household health score?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. A single 1–100 indicator summarizes how home, money and family are doing together. It gives you a quick overview without needing to read every detail — useful if you want minimal notifications but a general check."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What will the agent never do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The agent will never: talk to your doctor on your behalf, modify wills or legal documents, send money or sign contracts without confirmation, share sensitive data without consent, or provide binding medical, legal or financial advice."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- BreadcrumbList structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://everydayagent.com/site/" },
+        { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://everydayagent.com/site/faq/" }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <header class="site-header glass-surface">
+      <div class="site-header-inner">
+        <a href="/site/" class="brand-link" aria-label="Everyday Agent home">
+          <span class="brand-mark-sm"><span></span><span></span><span></span></span>
+          <span class="brand-name">Everyday <strong>Agent</strong></span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="/site/">Home</a>
+          <a href="/app/" class="site-nav-cta">Open Dashboard →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Breadcrumbs -->
+      <div class="breadcrumbs">
+        <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/site/"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1" />
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name" class="current">FAQ</span>
+            <meta itemprop="position" content="2" />
+          </li>
+        </ol>
+      </div>
+
+      <section class="faq-hero">
+        <div class="container">
+          <span class="eyebrow">Frequently Asked Questions</span>
+          <h1>Questions & answers</h1>
+          <p class="section-lead faq-lead">Direct answers, no marketing language. If your question isn't here, the agent itself can explain any decision.</p>
+          <div class="faq-search">
+            <input type="text" id="faqSearch" placeholder="Search questions..." aria-label="Search FAQ" />
+          </div>
+          <div class="faq-categories" id="faqCategories">
+            <button class="faq-cat-btn active" data-cat="all">All</button>
+            <button class="faq-cat-btn" data-cat="home">Home</button>
+            <button class="faq-cat-btn" data-cat="money">Money</button>
+            <button class="faq-cat-btn" data-cat="health">Health</button>
+            <button class="faq-cat-btn" data-cat="errands">Errands</button>
+            <button class="faq-cat-btn" data-cat="family">Family</button>
+            <button class="faq-cat-btn" data-cat="privacy">Privacy</button>
+            <button class="faq-cat-btn" data-cat="billing">Billing & subscription</button>
+            <button class="faq-cat-btn" data-cat="trust">Trust Engine</button>
+            <button class="faq-cat-btn" data-cat="features">Features</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="faq-list" id="faqList">
+        <div class="faq-item" data-cat="home">
+          <button class="faq-question" type="button">What does Everyday Agent handle at home?</button>
+          <div class="faq-answer">The home domain organizes maintenance, utilities, supplies and warranty reminders. In this prototype it only stores local reminders; it does not contact contractors, place orders or control devices.</div>
+        </div>
+        <div class="faq-item" data-cat="money">
+          <button class="faq-question" type="button">How are payments and spending handled?</button>
+          <div class="faq-answer">The prototype does not connect to banks or execute payments. A future money connector would require explicit confirmation, least-privilege access, transaction and monthly caps, audit records and a jurisdiction-specific review.</div>
+        </div>
+        <div class="faq-item" data-cat="health">
+          <button class="faq-question" type="button">What does the health domain provide?</button>
+          <div class="faq-answer">It can organize operational reminders such as appointments or prescriptions in the local prototype. It does not diagnose, recommend treatment or replace a healthcare professional.</div>
+        </div>
+        <div class="faq-item" data-cat="errands">
+          <button class="faq-question" type="button">What does the errands domain do?</button>
+          <div class="faq-answer">It organizes shopping lists, bookings and deliveries. In this prototype it stores local items only; real bookings, cancellations and external messages are not performed.</div>
+        </div>
+
+        <div class="faq-item" data-cat="trust">
+          <button class="faq-question" type="button">How does the Dynamic Trust Engine work?</button>
+          <div class="faq-answer">The Dynamic Trust Engine assigns a continuous score from 0 to 100 for every combination of action, counterparty and context. New combinations start at 20/100 (cautious). Approvals increase the score, rejections decrease it, and hesitation keeps it low. The score decays over time if there are no interactions. Money, health and legal documents always have absolute safety caps.</div>
+        </div>
+        <div class="faq-item" data-cat="trust">
+          <button class="faq-question" type="button">Can I see why the agent made a specific decision?</button>
+          <div class="faq-answer">Yes. Every automatic action (Level 1) can be explained on demand. Ask "why did you pay this bill without asking me?" and you get the exact rule, trust score, and context that was applied. Transparency is a core design principle.</div>
+        </div>
+        <div class="faq-item" data-cat="trust">
+          <button class="faq-question" type="button">What is the calibration period?</button>
+          <div class="faq-answer">During the first 14 days, the agent notifies more than necessary to learn your real preferences. It tells you explicitly: "I'm still calibrating, expect a few more notifications this week." After this period, it reduces notifications as trust builds.</div>
+        </div>
+        <div class="faq-item" data-cat="trust">
+          <button class="faq-question" type="button">Does the agent negotiate with providers?</button>
+          <div class="faq-answer">In the current demo, no. It runs locally and does not contact providers. Any future connector must be separately authorized, use least-privilege access and pass legal, security and provider review. The product will not claim that a planned connector is available until it is implemented and tested.</div>
+        </div>
+
+        <div class="faq-item" data-cat="privacy">
+          <button class="faq-question" type="button">What happens if the agent makes a mistake?</button>
+          <div class="faq-answer">The prototype does not provide a legal guarantee or insurance promise. It records local actions and offers local correction controls, but responsibility, remediation, refunds, limitations and escalation must be defined in final Terms and applicable contracts. Do not rely on the prototype for consequential decisions.</div>
+        </div>
+        <div class="faq-item" data-cat="privacy">
+          <button class="faq-question" type="button">Who can see my health data?</button>
+          <div class="faq-answer">In this local prototype, health-related reminder data is stored in the browser and is not sent to an external service by the demo. Do not enter real health information. A production service would need explicit consent, access controls, contracts and a lawful sharing process. The prototype only provides operational reminders, not clinical advice.</div>
+        </div>
+        <div class="faq-item" data-cat="privacy">
+          <button class="faq-question" type="button">Is Everyday Agent GDPR compliant?</button>
+          <div class="faq-answer">No. The local prototype is not a legal certification and the production service is not yet deployed. It is designed around data minimization and local controls, but compliance depends on the final operator, processing activities, vendors, jurisdictions, contracts and controls. Qualified privacy counsel must review the actual launch before any compliance claim is made.</div>
+        </div>
+        <div class="faq-item" data-cat="privacy">
+          <button class="faq-question" type="button">What will the agent never do?</button>
+          <div class="faq-answer">The agent will never: talk to your doctor on your behalf, modify wills or legal documents, send money or sign contracts without confirmation, share sensitive data without consent, or provide binding medical, legal or financial advice.</div>
+        </div>
+
+        <div class="faq-item" data-cat="family">
+          <button class="faq-question" type="button">How does the agent handle family permissions?</button>
+          <div class="faq-answer">A permission matrix defines who can approve what. Teenagers cannot authorize spending. A partner may have full access to some domains and none to others (e.g., personal accounts). Routing rules can direct specific decisions to the most appropriate family member.</div>
+        </div>
+
+        <div class="faq-item" data-cat="features">
+          <button class="faq-question" type="button">Can I disable autonomy at any time?</button>
+          <div class="faq-answer">Yes. You can set the agent to "Always ask me" mode globally or per-domain at any time. This immediately overrides all trust scores and requires your explicit confirmation for every action, regardless of the trust level.</div>
+        </div>
+        <div class="faq-item" data-cat="features">
+          <button class="faq-question" type="button">What happens if I stop responding to notifications?</button>
+          <div class="faq-answer">For every Level 3 notification, the agent shows what happens by default if you don't respond — for example, "if you don't reply by Friday, the contract auto-renews at old terms." This removes the anxiety of needing to respond immediately.</div>
+        </div>
+        <div class="faq-item" data-cat="features">
+          <button class="faq-question" type="button">Does the agent contact external services?</button>
+          <div class="faq-answer">In the current demo, no. Everything runs locally. When external integrations are connected (calendar, email, banking), the agent never sends payments, emails, or contracts without your explicit approval for that specific action.</div>
+        </div>
+        <div class="faq-item" data-cat="features">
+          <button class="faq-question" type="button">What is the hidden cost detector?</button>
+          <div class="faq-answer">The agent identifies subscriptions and expenses you've stopped using (an app not opened for 3 months, a gym membership you never visit) and flags them in a dedicated monthly digest, so you notice before wasting money.</div>
+        </div>
+        <div class="faq-item" data-cat="features">
+          <button class="faq-question" type="button">Is there a household health score?</button>
+          <div class="faq-answer">Yes. A single 1–100 indicator summarizes how home, money and family are doing together. It gives you a quick overview without needing to read every detail — useful if you want minimal notifications but a general check.</div>
+        </div>
+
+        <div class="faq-item" data-cat="billing">
+          <button class="faq-question" type="button">What happens to my data if I stop using the agent?</button>
+          <div class="faq-answer">You can export the local demo state, pause the agent and delete browser data from the dashboard. A production offboarding process must define retention, legal holds, integration revocation, identity verification and ownership of open deadlines; this prototype is not a guarantee of deletion or handover.</div>
+        </div>
+      </div>
+
+      <div class="faq-empty" id="faqEmpty">
+        <strong>No matching questions</strong>
+        <p>Try a different search term or browse by category.</p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <span class="brand-mark-sm"><span></span><span></span><span></span></span>
+          <span class="brand-name">Everyday <strong>Agent</strong></span>
+        </div>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <a href="/site/">Home</a>
+          <a href="/site/legal/">Legal & privacy</a>
+          <a href="/app/">Dashboard</a>
+        </nav>
+        <p class="footer-copy">Trust-first personal agent. MIT License.</p>
+      </div>
+    </footer>
+
+    <script src="/site/faq.js" defer></script>
+  </body>
+</html>

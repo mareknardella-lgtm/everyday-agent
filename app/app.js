@@ -12,6 +12,7 @@ const translations = {
     nav_family: "Famiglia",
     nav_memory: "Memoria",
     nav_integrations: "Integrazioni",
+    nav_support: "Supporto",
     nav_settings: "Impostazioni",
     nav_governance: "Governance",
     nav_workspace: "Workspace",
@@ -385,6 +386,7 @@ const translations = {
     nav_family: "Family",
     nav_memory: "Memory",
     nav_integrations: "Integrations",
+    nav_support: "Support",
     nav_settings: "Settings",
     nav_governance: "Governance",
     nav_workspace: "Workspace",
@@ -815,6 +817,9 @@ const defaultState = {
   pending: [],
   dismissed: [],
   customTasks: [],
+  calendarEvents: [],
+  timeEntries: [],
+  controlEvents: [],
   preferences: [],
   rejections: [],
   rejectionKeys: [],
@@ -863,6 +868,8 @@ const defaultState = {
     "Non sostituirò mai una relazione umana né userò un framing affettivo."
   ],
   offboarding: { paused: false, handoverCreatedAt: "", handover: null, mode: "active" },
+  simulationReport: null,
+  simulationScenario: { name: "Marta Rossi", monthly_income_eur: 4200, partner: "Luca", child: "Nina", pet: "gatto", trusted_provider: "Idraulico Fidato", habits: ["approva rapidamente i fornitori conosciuti", "risponde tardi ai contratti", "controlla il budget la domenica"] },
   policiesAcknowledged: false,
 };
 
@@ -936,6 +943,9 @@ function loadState() {
       pending: Array.isArray(stored.pending) ? stored.pending : [...defaultState.pending],
       dismissed: Array.isArray(stored.dismissed) ? stored.dismissed : [],
       customTasks: Array.isArray(stored.customTasks) ? stored.customTasks : [],
+      calendarEvents: Array.isArray(stored.calendarEvents) ? stored.calendarEvents : [],
+      timeEntries: Array.isArray(stored.timeEntries) ? stored.timeEntries : [],
+      controlEvents: Array.isArray(stored.controlEvents) ? stored.controlEvents : [],
       rejections: Array.isArray(stored.rejections) ? stored.rejections : [],
       rejectionKeys: Array.isArray(stored.rejectionKeys) ? stored.rejectionKeys : [],
       neverAutomate: Array.isArray(stored.neverAutomate) ? stored.neverAutomate : [],
@@ -964,6 +974,8 @@ function loadState() {
       seasonalPeriods: Array.isArray(stored.seasonalPeriods) ? stored.seasonalPeriods : JSON.parse(JSON.stringify(defaultState.seasonalPeriods)),
       neverDo: Array.isArray(stored.neverDo) ? stored.neverDo : [...defaultState.neverDo],
       offboarding: { ...defaultState.offboarding, ...(stored.offboarding || {}) },
+      simulationReport: stored.simulationReport && typeof stored.simulationReport === "object" ? stored.simulationReport : null,
+      simulationScenario: { ...defaultState.simulationScenario, ...(stored.simulationScenario || {}), habits: Array.isArray(stored.simulationScenario?.habits) ? stored.simulationScenario.habits : [...defaultState.simulationScenario.habits] },
       policiesAcknowledged: Boolean(stored.policiesAcknowledged || stored.privacy?.policiesAcknowledged),
       neverDo: Array.isArray(stored.neverDo) && stored.neverDo.length ? stored.neverDo : [...defaultState.neverDo]
     };
@@ -1843,6 +1855,7 @@ function setupModal() {
       state.trustProposals.unshift({ ...analysis.importedTrustProposal, createdAt });
     }
     state.customTasks.unshift(task);
+    addControlEvent({ type: "task", title, icon: analysis.level === 3 ? "!" : "✓", tone: analysis.level === 3 ? "warning" : "positive", meta: `${category} · fiducia ${analysis.trustScore.toFixed(0)}/100`, status: analysis.level === 3 ? "open" : "done", statusLabel: analysis.level === 3 ? "Decisione" : "Registrato" });
     if (analysis.level === 1 || analysis.level === 2) {
       state.completed += 1;
       state.metrics.notificationsAvoided += calibrationActive() ? 0 : 1;
@@ -1894,6 +1907,31 @@ function renderCustomDecisions() {
     if (state.deferred.includes(task.id)) card.classList.add("deferred");
     bindDecisionCard(card);
   });
+}
+
+function addControlEvent(event) {
+  state.controlEvents = Array.isArray(state.controlEvents) ? state.controlEvents : [];
+  state.controlEvents.unshift({ id: createTaskId(), createdAt: new Date().toISOString(), ...event });
+  state.controlEvents = state.controlEvents.slice(0, 100);
+}
+
+function renderControlFeed(filter = "all") {
+  const feed = document.getElementById("controlFeed");
+  if (!feed) return;
+  const events = (state.controlEvents || []).filter((event) => filter === "all" || (filter === "open" && event.status !== "done") || (filter === "time" && event.type === "time"));
+  if (!events.length) {
+    feed.innerHTML = `<div class="empty-list-state"><span>◈</span><strong>Nessun evento nel feed</strong><small>Le tue attività collegate appariranno qui.</small></div>`;
+    return;
+  }
+  feed.innerHTML = events.slice(0, 12).map((event) => `<article class="control-feed-row"><span class="feed-event-icon ${escapeHTML(event.tone || "neutral")}">${escapeHTML(event.icon || "•")}</span><div><strong>${escapeHTML(event.title)}</strong><small>${escapeHTML(event.meta || "Evento locale")}</small></div><time>${new Date(event.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</time><span class="feed-status ${escapeHTML(event.status || "open")}">${escapeHTML(event.statusLabel || "Aperto")}</span></article>`).join("");
+}
+
+function setupControlFeed() {
+  document.querySelectorAll("[data-feed-filter]").forEach((button) => button.addEventListener("click", () => {
+    document.querySelectorAll("[data-feed-filter]").forEach((item) => item.classList.toggle("active", item === button));
+    renderControlFeed(button.dataset.feedFilter);
+  }));
+  renderControlFeed();
 }
 
 function renderCustomTasks() {
@@ -2048,14 +2086,39 @@ function setupCalendar() {
   const calendar = document.getElementById("calendarDays");
   if (!calendar) return;
   const days = [27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 1, 2, 3, 4, 5, 6];
+  const events = Array.isArray(state.calendarEvents) ? state.calendarEvents : [];
   days.forEach((day, index) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `calendar-day ${index < 5 || index > 35 ? "muted" : ""} ${day === 25 && index === 29 ? "today" : ""}`;
     button.innerHTML = `<span class="day-number">${day}</span>`;
-    button.addEventListener("click", () => showToast(`${day} agosto 2026 · Puoi aggiungere un evento qui.`));
+    const dayEvent = events.find((event) => new Date(event.date).getDate() === day);
+    if (dayEvent) button.innerHTML += `<small class="calendar-event-mark">${escapeHTML(dayEvent.title)} · ${escapeHTML(dayEvent.start)}–${escapeHTML(dayEvent.end)}</small>`;
+    button.addEventListener("click", () => showToast(dayEvent ? `${dayEvent.title} · ${dayEvent.start}–${dayEvent.end}` : `${day} agosto 2026 · Puoi aggiungere un evento qui.`));
     calendar.appendChild(button);
   });
+  document.getElementById("calendarPreviousButton")?.addEventListener("click", () => showToast("Mese precedente disponibile quando aggiungi il primo evento."));
+  document.getElementById("calendarNextButton")?.addEventListener("click", () => showToast("Mese successivo disponibile quando aggiungi il primo evento."));
+  document.getElementById("calendarTodayButton")?.addEventListener("click", () => showToast("Sei già sul periodo corrente."));
+  document.getElementById("saveCalendarEventButton")?.addEventListener("click", () => {
+    const title = document.getElementById("calendarEventTitle")?.value.trim();
+    const date = document.getElementById("calendarEventDate")?.value;
+    const start = document.getElementById("calendarEventStart")?.value || "09:00";
+    const end = document.getElementById("calendarEventEnd")?.value || "10:00";
+    if (!title || !date || start >= end) { showToast("Inserisci titolo, data e un orario valido.", "warning"); return; }
+    state.calendarEvents = Array.isArray(state.calendarEvents) ? state.calendarEvents : [];
+    state.calendarEvents.push({ id: createTaskId(), title, date, start, end, durationMinutes: (Number(end.slice(0,2)) * 60 + Number(end.slice(3)) - Number(start.slice(0,2)) * 60 - Number(start.slice(3))) });
+    addControlEvent({ type: "calendar", title, icon: "▦", tone: "blue", meta: `${date} · ${start}–${end}`, status: "open", statusLabel: "In calendario" });
+    saveState();
+    renderControlFeed();
+    showToast(`Evento “${title}” salvato: ${start}–${end}.`);
+    calendar.innerHTML = "";
+    setupCalendar();
+  });
+  document.querySelectorAll("[data-calendar-view]").forEach((button) => button.addEventListener("click", () => {
+    document.querySelectorAll("[data-calendar-view]").forEach((item) => item.classList.toggle("active", item === button));
+    showToast(button.dataset.calendarView === "week" ? "Vista settimana selezionata." : "Vista mese selezionata.");
+  }));
 }
 
 function setupGrocery() {
@@ -2097,6 +2160,108 @@ function renderDigestPreview() {
   const elementCount = state.completed + pending + queued;
   document.getElementById("digestElementCount")?.replaceChildren(`${elementCount} element${elementCount === 1 ? "o" : "i"}`);
   content.innerHTML = `<div class="digest-preview-row"><span>✅ Fatto</span><strong>${state.completed} attività gestite</strong></div><div class="digest-preview-row"><span>👀 Da monitorare</span><strong>${pending} decision${pending === 1 ? "e" : "i"}</strong></div><div class="digest-preview-row"><span>🔕 In coda</span><strong>${queued} notific${queued === 1 ? "a" : "he"}</strong></div><div class="digest-preview-row"><span>🔒 Privacy</span><strong>Nessuna azione esterna</strong></div>${recent.length ? `<div class="digest-preview-list">${recent.map((task) => `<span>${escapeHTML(task.title)}</span>`).join("")}</div>` : ""}`;
+}
+
+function setupTimeTracker() {
+  const display = document.getElementById("timeTrackerDisplay");
+  const labelInput = document.getElementById("timeTrackerLabel");
+  const startButton = document.getElementById("timeTrackerStartButton");
+  const stopButton = document.getElementById("timeTrackerStopButton");
+  const list = document.getElementById("timeEntryList");
+  let startedAt = null;
+  let timer = null;
+  const format = (seconds) => [Math.floor(seconds / 3600), Math.floor(seconds / 60) % 60, seconds % 60].map((value) => String(value).padStart(2, "0")).join(":");
+  const render = () => {
+    if (list) list.innerHTML = state.timeEntries?.length ? state.timeEntries.slice(-8).reverse().map((entry) => `<div class="time-entry"><span>${escapeHTML(entry.label)}</span><strong>${format(entry.durationSeconds)}</strong></div>`).join("") : `<span class="muted-label">Nessuna sessione registrata.</span>`;
+  };
+  const tick = () => { if (display && startedAt) display.textContent = format(Math.floor((Date.now() - startedAt) / 1000)); };
+  startButton?.addEventListener("click", () => { if (startedAt) return; startedAt = Date.now(); timer = window.setInterval(tick, 1000); startButton.disabled = true; stopButton.disabled = false; showToast("Timer avviato."); });
+  stopButton?.addEventListener("click", () => { if (!startedAt) return; const durationSeconds = Math.max(1, Math.floor((Date.now() - startedAt) / 1000)); state.timeEntries = Array.isArray(state.timeEntries) ? state.timeEntries : [];    const label = labelInput?.value.trim() || "Sessione senza nome"; state.timeEntries.push({ label, startedAt: new Date(startedAt).toISOString(), durationSeconds }); addControlEvent({ type: "time", title: label, icon: "◷", tone: "purple", meta: `Sessione · ${format(durationSeconds)}`, status: "done", statusLabel: "Completato" }); saveState(); renderControlFeed(); window.clearInterval(timer); startedAt = null; if (display) display.textContent = "00:00:00"; startButton.disabled = false; stopButton.disabled = true; render(); showToast(`Sessione salvata: ${format(durationSeconds)}.`); });
+  render();
+}
+
+function setupOfflineMonitoring() {
+  const status = document.getElementById("offlineStatus");
+  const showStatus = (message) => {
+    if (!status) return;
+    status.textContent = message;
+    status.hidden = false;
+    window.clearTimeout(showStatus.timer);
+    showStatus.timer = window.setTimeout(() => { status.hidden = true; }, 5000);
+  };
+  const update = () => {
+    if (!navigator.onLine) showStatus("Modalità offline: i dati locali restano disponibili.");
+    else if (status && !status.hidden) showStatus("Connessione ripristinata.");
+  };
+  window.addEventListener("offline", update);
+  window.addEventListener("online", update);
+  update();
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.ready.then((registration) => {
+      window.everydayScheduleReminder = ({ title, body, delayMs = 0 } = {}) => {
+        registration.active?.postMessage({ type: "SCHEDULE_LOCAL_REMINDER", title, body, delayMs });
+        showStatus("Promemoria locale programmato.");
+      };
+    }).catch(() => {});
+  }
+}
+
+function setupSupport() {
+  const form = document.getElementById("supportForm");
+  const input = document.getElementById("supportInput");
+  const category = document.getElementById("supportCategory");
+  const answer = document.getElementById("supportAnswer");
+  if (!form || !input || !answer) return;
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const question = input.value.trim();
+    if (!question) {
+      input.focus();
+      showToast("Descrivi il problema prima di cercare una soluzione.", "warning");
+      return;
+    }
+    const normalized = question.toLowerCase();
+    const selectedCategory = category?.value || "info";
+    let title = "Ho trovato un’indicazione nei documenti locali";
+    let body = "Controlla README.md e run.md per i passaggi di avvio. Se il problema riguarda la dashboard, verifica di aver aperto il server sulla porta indicata e di usare la route principale.";
+    let status = "Risolto: istruzioni disponibili";
+    if (selectedCategory === "human" || normalized.includes("operatore") || normalized.includes("umano") || normalized.includes("frode")) {
+      title = "La richiesta deve passare a un operatore";
+      body = "Per frodi, accessi non autorizzati, controversie economiche, richieste legali formali o quando lo chiedi esplicitamente, il supporto AI non procede oltre. Usa il canale ufficiale del prodotto e conserva il riepilogo di questo caso.";
+      status = "Passato a un operatore umano: il supporto AI non può gestire questo caso.";
+    } else if (selectedCategory === "error" || normalized.includes("test") || normalized.includes("errore")) {
+      title = "Prima verifichiamo cosa è successo";
+      body = normalized.includes("test") ? "Apri il terminale nella cartella del progetto ed esegui: py -3 -m unittest -q. Per JavaScript usa node --check app/app.js. Un risultato OK indica che i test sono riusciti." : "Controlla l’attività nella sezione Governance e l’audit locale. Se l’errore ha coinvolto denaro, salute o documenti, non ripetere l’azione: annota l’orario e passa il caso a un operatore umano.";
+      status = "In corso: verifica locale consigliata prima di qualsiasi correzione.";
+    } else if (selectedCategory === "autonomy") {
+      title = "Puoi ridurre l’autonomia subito";
+      body = "Per ridurre l’autonomia, apri Impostazioni e attiva la modalità ‘Chiedimi sempre’ o modifica i confini del dominio. L’aggiornamento deve essere immediato e non richiede una conferma aggiuntiva. Per aumentarla, il motore verifica prima la storia specifica di azione, controparte e contesto.";
+      status = "Risolto: il controllo è disponibile nelle Impostazioni.";
+    } else if (selectedCategory === "frustration") {
+      title = "La tua segnalazione resta sotto il tuo controllo";
+      body = "Non userò la cronologia di fiducia contro di te. Posso spiegare la regola applicata, mostrare l’audit e guidarti verso una correzione. Se c’è un danno economico o sanitario, la richiesta va passata a un operatore umano.";
+      status = "In corso: scegli se correggere l’autonomia o chiedere un operatore.";
+    } else if (normalized.includes("preview") || normalized.includes("non apre") || normalized.includes("server")) {
+      title = "Verifica il server della Preview";
+      body = "Avvia il server con PORT=4174 node preview-server.mjs e apri http://127.0.0.1:4174/. La dashboard principale è disponibile anche su /app/.";
+    } else if (normalized.includes("lingua") || normalized.includes("inglese") || normalized.includes("italiano")) {
+      title = "Controlla la lingua nell’onboarding";
+      body = "La lingua viene scelta nell’onboarding e salvata nel browser. Per ripetere la scelta, elimina la chiave everyday-agent-state-v2 dal Local Storage e ricarica la pagina.";
+    } else if (normalized.includes("github") || normalized.includes("repository")) {
+      title = "Controlla i file del repository";
+      body = "README.md, LICENSE, ARCHITECTURE.md e SUBMISSION.md devono essere presenti nel repository pubblico. Dopo averli aggiunti, esegui commit e push da GitHub Desktop o dal terminale.";
+    }
+    answer.innerHTML = `<span class="support-answer-mark">${status.startsWith("Passato") ? "→" : "✓"}</span><div><strong>${title}</strong><p>${body}</p><small>Riepilogo: ${title}.<br>Stato: ${status}.<br>Prossimo passo: ${selectedCategory === "human" ? "contatta il canale ufficiale" : "segui le istruzioni indicate sopra"}.</small></div>`;
+  });
+}
+
+function setupVisualActions() {
+  document.querySelectorAll('[data-action="more"]').forEach((button) => button.addEventListener("click", () => showToast("Non ci sono altre azioni disponibili in questa demo.")));
+  document.getElementById("searchButton")?.addEventListener("click", () => document.querySelector(".ops-search input")?.focus());
+  document.getElementById("notificationButton")?.addEventListener("click", () => navigate("decisions"));
+  document.getElementById("profileButton")?.addEventListener("click", () => navigate("settings"));
+  document.querySelector(".workspace-switcher")?.addEventListener("click", () => showToast("Workspace locale attivo."));
+  document.querySelectorAll(".integration-toggle").forEach((button) => button.title = "Attiva o disattiva integrazione locale");
 }
 
 function setupDigest() {
@@ -2455,6 +2620,103 @@ function updateGovernanceUI() {
   renderTrustProfiles();
 }
 
+function getSimulationScenarioFromForm() {
+  const value = (id, fallback = "") => document.getElementById(id)?.value.trim() || fallback;
+  const income = Number(document.getElementById("simulationIncome")?.value || 4200);
+  return {
+    name: value("simulationUserName", "Marta Rossi"),
+    monthly_income_eur: Number.isFinite(income) ? Math.max(800, Math.min(100000, Math.round(income))) : 4200,
+    partner: value("simulationPartner", "Luca"),
+    child: value("simulationChild", "Nina"),
+    pet: value("simulationPet", "gatto"),
+    trusted_provider: value("simulationTrustedProvider", "Idraulico Fidato"),
+    habits: value("simulationHabits", "approva rapidamente i fornitori conosciuti").split(",").map((item) => item.trim()).filter(Boolean).slice(0, 8)
+  };
+}
+
+function renderSimulationScenario() {
+  const scenario = state.simulationScenario || defaultState.simulationScenario;
+  const values = {
+    simulationUserName: scenario.name,
+    simulationIncome: scenario.monthly_income_eur,
+    simulationPartner: scenario.partner,
+    simulationChild: scenario.child,
+    simulationPet: scenario.pet,
+    simulationTrustedProvider: scenario.trusted_provider,
+    simulationHabits: (scenario.habits || []).join(", ")
+  };
+  Object.entries(values).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input) input.value = value ?? "";
+  });
+}
+
+function renderSimulationReport() {
+  const report = state.simulationReport;
+  const badge = document.getElementById("simulationStatusBadge");
+  const metrics = document.getElementById("simulationMetrics");
+  const output = document.getElementById("simulationOutput");
+  const download = document.getElementById("downloadSimulationButton");
+  const clear = document.getElementById("clearSimulationButton");
+  if (!metrics || !output) return;
+  if (!report) {
+    if (badge) { badge.textContent = "non eseguita"; badge.classList.remove("active-badge"); }
+    metrics.innerHTML = "<span><strong>—</strong><small>azioni</small></span><span><strong>—</strong><small>notifiche</small></span><span><strong>—</strong><small>contraddizioni</small></span>";
+    output.innerHTML = "<strong>Nessun ciclo eseguito</strong><small>L’esecuzione produrrà un log giorno per giorno e le correzioni di policy.</small>";
+    if (download) download.disabled = true;
+    if (clear) clear.disabled = true;
+    return;
+  }
+  const summary = report.metrics || {};
+  if (badge) { badge.textContent = "completata"; badge.classList.add("active-badge"); }
+  metrics.innerHTML = `<span><strong>${Number(summary.actions || 0).toLocaleString("it-IT")}</strong><small>azioni</small></span><span><strong>${Number(summary.notifications_total || 0).toLocaleString("it-IT")}</strong><small>notifiche</small></span><span><strong>${Number(summary.contradictions_found || 0)}</strong><small>contraddizioni</small></span>`;
+  const latest = (report.contradictions || []).slice(0, 3).map((item) => `<li><strong>Giorno ${escapeHTML(item.day)} · ${escapeHTML(item.title)}</strong><small>${escapeHTML(item.resolution)}</small></li>`).join("");
+  output.innerHTML = `<strong>${escapeHTML(report.simulation?.months || 0)} mesi analizzati · seed ${escapeHTML(report.simulation?.seed || "")}</strong><small>${Number(summary.blocked_actions || 0)} azioni avversarie bloccate · ${Number(summary.support_cases || 0)} casi passati dal Supporto.</small>${latest ? `<ul>${latest}</ul>` : ""}`;
+  if (download) download.disabled = false;
+  if (clear) clear.disabled = false;
+}
+
+function setupSimulation() {
+  renderSimulationScenario();
+  renderSimulationReport();
+  document.getElementById("resetSimulationScenarioButton")?.addEventListener("click", () => {
+    state.simulationScenario = JSON.parse(JSON.stringify(defaultState.simulationScenario));
+    saveState();
+    renderSimulationScenario();
+    showToast("Scenario demo ripristinato.");
+  });
+  document.getElementById("runSimulationButton")?.addEventListener("click", async () => {
+    const button = document.getElementById("runSimulationButton");
+    const duration = Number(document.getElementById("simulationDuration")?.value || 365);
+    const scenario = getSimulationScenarioFromForm();
+    state.simulationScenario = scenario;
+    saveState();
+    if (button) { button.disabled = true; button.textContent = "Simulazione in corso…"; }
+    try {
+      const params = new URLSearchParams({ days: String(duration), seed: "20260831", scenario: JSON.stringify(scenario), run: String(Date.now()) });
+      const response = await fetch(`/simulation-report.json?${params.toString()}`, { cache: "no-store" });
+      if (!response.ok) throw new Error(`simulation_${response.status}`);
+      state.simulationReport = await response.json();
+      saveState();
+      renderSimulationReport();
+      showToast(`Simulazione completata per ${scenario.name}: ${state.simulationReport.metrics.actions} azioni analizzate.`);
+    } catch (error) {
+      showToast("Simulazione non disponibile: avvia preview-server.mjs e riprova.", "warning");
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "Esegui simulazione"; }
+    }
+  });
+  document.getElementById("downloadSimulationButton")?.addEventListener("click", () => {
+    if (state.simulationReport) downloadJSON("everyday-agent-simulation-report.json", state.simulationReport);
+  });
+  document.getElementById("clearSimulationButton")?.addEventListener("click", () => {
+    state.simulationReport = null;
+    saveState();
+    renderSimulationReport();
+    showToast("Risultato della simulazione cancellato.");
+  });
+}
+
 function downloadJSON(filename, payload) {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const link = document.createElement("a");
@@ -2529,6 +2791,12 @@ function setupGovernance() {
     showToast("Errore registrato e fiducia locale ridotta solo per questa combinazione.", "warning");
   });
   document.getElementById("viewAuditButton")?.addEventListener("click", () => showToast(auditIsValid() ? `Audit verificato: ${state.auditLog.length} eventi nella catena locale.` : "Audit non valido: controlla la cronologia locale.", auditIsValid() ? "success" : "warning"));
+  const legalBackdrop = document.getElementById("legalBackdrop");
+  const closeLegal = () => { legalBackdrop?.classList.remove("open"); legalBackdrop?.setAttribute("aria-hidden", "true"); };
+  document.getElementById("openLegalDocsButton")?.addEventListener("click", () => { legalBackdrop?.classList.add("open"); legalBackdrop?.setAttribute("aria-hidden", "false"); });
+  document.getElementById("legalClose")?.addEventListener("click", closeLegal);
+  document.getElementById("legalCloseButton")?.addEventListener("click", closeLegal);
+  legalBackdrop?.addEventListener("click", (event) => { if (event.target === legalBackdrop) closeLegal(); });
   document.getElementById("runDependencyCheckButton")?.addEventListener("click", () => {
     const message = state.manualMode ? "Modalità manuale già attiva: nessuna autonomia resta attiva." : "Revisione completata: puoi ridurre l'autonomia in un solo passaggio.";
     showToast(message, "info");
@@ -2664,10 +2932,16 @@ function init() {
   setupGrocery();
   setupDigest();
   setupAssistant();
+  setupSupport();
+  setupOfflineMonitoring();
+  setupTimeTracker();
+  setupControlFeed();
+  setupVisualActions();
   setupSettings();
   setupBackendAccount();
   setupIntegrations();
   setupGovernance();
+  setupSimulation();
   setupSearch();
   setupSecondaryActions();
   renderCustomTasks();

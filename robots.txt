@@ -1,0 +1,16 @@
+# Everyday Agent — robots.txt
+# Allow all public pages, block private/app areas
+
+User-agent: *
+Allow: /
+Allow: /site/
+Allow: /site/faq/
+
+# Block app dashboard, thank-you page (non-organic traffic), and private areas
+Disallow: /app/
+Disallow: /site/thank-you.html
+Disallow: /.everyday-memory.json
+Disallow: /.freebuff/
+
+# Sitemap
+Sitemap: https://everydayagent.com/sitemap.xml

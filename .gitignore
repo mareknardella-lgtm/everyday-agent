@@ -1,0 +1,29 @@
+# Local development files
+.freebuff/
+*.log
+*.log.err
+
+# Python generated files
+__pycache__/
+*.py[cod]
+
+# Local data and secrets
+.env
+.env.*
+!.env.example
+agent.config.json
+.everyday-memory.json
+*.db
+*.sqlite
+*.sqlite3
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dependencies and build output
+node_modules/
+dist/
+build/

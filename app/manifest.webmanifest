@@ -1,0 +1,16 @@
+{
+  "name": "Everyday Agent",
+  "short_name": "Everyday Agent",
+  "description": "A local trust-first everyday operations dashboard.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0c0f",
+  "theme_color": "#0b0c0f",
+  "icons": [{
+    "src": "/favicon.svg",
+    "sizes": "any",
+    "type": "image/svg+xml",
+    "purpose": "any maskable"
+  }]
+}

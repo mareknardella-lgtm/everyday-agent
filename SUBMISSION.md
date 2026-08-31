@@ -1,91 +1,89 @@
 # Hackathon Submission Pack
 
-## Short description
+## Text description
 
-Everyday Agent è un assistente operativo personale per persone e famiglie che vogliono ridurre il carico mentale della vita quotidiana. Organizza casa, denaro, salute, commissioni e calendario, ma non interrompe continuamente l'utente: impara una fiducia specifica per ogni combinazione di azione, controparte e contesto.
+Everyday Agent is a trust-first personal operating system for people and families who want less mental load without giving up control. It organizes home, money, health, errands, family, calendar and support workflows in one dark operations dashboard.
 
-Una richiesta nuova parte prudente. Approvazioni, rifiuti, correzioni e tempi di risposta aggiornano il punteggio. Le azioni sensibili restano protette da tetti assoluti, consenso esplicito e permessi familiari. Ogni decisione è spiegabile, auditabile e correggibile.
+Its differentiator is the **Dynamic Trust Engine**. Instead of using a generic rule such as “ask above €50”, it calculates a separate 0–100 trust score for each combination of action, counterparty and context. A new combination starts at 20/100. Fast approvals raise trust, slow responses raise it less, rejections reduce it sharply and inactivity makes trust decay toward the cautious baseline. Safety caps, consent, family permissions and manual mode always override trust.
+
+The current submission is an offline local prototype. It includes working local interactions, persistence, governance controls, a deterministic multi-role lifecycle simulation and automated tests. External banking, email, healthcare, booking and payment integrations are intentionally not enabled.
 
 ## Who is it for?
 
-- persone che gestiscono molte attività ricorrenti;
-- famiglie che condividono scadenze ma non gli stessi permessi;
-- utenti che vogliono automazione senza notifiche continue;
-- utenti europei per cui privacy, consenso e controllo dei dati sono essenziali.
+- People managing recurring household and personal tasks
+- Families sharing deadlines while keeping permissions separate
+- Users who want automation without constant notifications
+- Privacy-conscious users who need visible boundaries and local controls
 
 ## Why it matters
 
-Gli assistenti tradizionali ottimizzano la quantità di funzioni o notifiche. Everyday Agent ottimizza la fiducia: agisce in silenzio quando il rischio è basso e porta all'utente solo le decisioni reali. Il risultato è meno rumore, più controllo e un'autonomia che cresce solo attraverso comportamenti osservati.
+Traditional assistants optimize for more features or more engagement. Everyday Agent optimizes for useful silence: it handles low-risk work without unnecessary interruption and surfaces only decisions that genuinely need a person. Trust becomes personal, explainable and reversible instead of being a fixed threshold applied to everyone.
 
 ## How to run
 
-### Web demo
-
-Requisiti: Node.js 18+ e Python 3.11+ per i test. Non sono richieste dipendenze npm.
+Requirements: Node.js 18+ and Python 3.11+. No npm dependencies are required.
 
 ```bash
 node preview-server.mjs
 ```
 
-Aprire `http://127.0.0.1:4173/` oppure usare Live Server in VS Code.
+Open `http://127.0.0.1:4173/`.
 
-### Backend locale opzionale
-
-```bash
-python api_server.py --serve-static
-```
-
-Il backend usa SQLite locale, sessioni HttpOnly, CSRF e password derivate con scrypt. Non collega banche, email, salute o fornitori esterni.
-
-### Test
+Run the tests:
 
 ```bash
 py -3 -m unittest -v
-node --check app.js
-node --check preview-server.mjs
 ```
 
-## Demo video: script massimo 5 minuti
+Run the deterministic simulation:
 
-### 0:00–0:35 — Problema
+```bash
+py -3 lifecycle_simulation.py --days 365 --seed 20260831 --output simulation-report.json
+```
 
-“Le persone non hanno bisogno di un altro chatbot che chiede attenzione. Hanno bisogno di qualcuno che gestisca il lavoro ripetitivo senza creare ansia. Le soglie fisse non funzionano: mi posso fidare del mio idraulico per 300 euro, ma non di un fornitore nuovo per 20.”
+## Five-minute demo script
 
-### 0:35–1:05 — Utenti e valore
+### 0:00–0:35 — Problem
 
-“Everyday Agent è per persone e famiglie che gestiscono casa, scadenze, denaro e impegni. L’obiettivo è semplice: lavorare in silenzio e parlare solo quando c’è una decisione vera.”
+“People do not need another chatbot demanding attention. They need something that handles repetitive work without creating anxiety. Fixed thresholds do not work: I may trust my plumber for €300, but not a new provider for €20.”
 
-### 1:05–2:15 — Demo
+### 0:35–1:05 — Users and value
 
-1. Mostrare l'onboarding e i confini dichiarati.
-2. Inserire una richiesta per un fornitore nuovo: mostrare fiducia 20/100 e richiesta di conferma.
-3. Approvare la richiesta più volte o mostrare un profilo fidato.
-4. Mostrare come la fiducia cambia e come il digest riduce le interruzioni.
-5. Aprire Governance e mostrare spiegazione, audit, tetti e permessi.
+“Everyday Agent is for people and families managing home, deadlines, money and daily commitments. It works quietly when the risk is low and asks for a real decision only when one is needed.”
 
-### 2:15–3:00 — Sicurezza
+### 1:05–2:25 — Working demo
 
-“Il punteggio non può superare i confini di sicurezza. Denaro, salute e documenti legali richiedono consenso e conferma. La demo non effettua pagamenti, non invia email e non accede a credenziali. Il modello decide cosa proporre; un executor separato dovrebbe applicare i permessi.”
+1. Show onboarding, language selection and the explicit “what I will never do” boundaries.
+2. Create a request involving a new provider.
+3. Show the cautious 20/100 trust profile and confirmation request.
+4. Approve or reject the request and show the profile update.
+5. Open the Control Feed, calendar and time tracker.
+6. Open Governance and run a personalized six- or twelve-month pre-launch simulation.
+7. Show the report metrics, contradictions and downloadable log.
 
-### 3:00–3:40 — Architettura
+### 2:25–3:15 — Safety and governance
 
-Mostrare `ARCHITECTURE.md`: UI, motore di fiducia, policy, audit, backend locale ed executor separato.
+“Trust is never authorization by itself. Money, health, legal documents, suspicious activity, irreversible actions and minors remain behind fixed protections. The demo includes manual mode, family permissions, explanation, audit, local correction and offboarding.”
 
-### 3:40–4:25 — Perché è diverso
+### 3:15–4:05 — Architecture
 
-“Il vantaggio non è il numero di feature. È la memoria comportamentale specifica dell’utente: approvazioni, rifiuti, correzioni e decadimento nel tempo. Dopo un anno l’agente è calibrato sulla vita reale della persona, non su soglie generiche.”
+Show `ARCHITECTURE.md`: the UI, local state, optional backend, Dynamic Trust Engine, policy gate, audit layer, separate executor boundary and adversarial simulation.
 
-### 4:25–5:00 — Chiusura
+### 4:05–4:40 — Differentiation
 
-“Everyday Agent non promette zero errori o automazione totale. Promette trasparenza immediata, controllo reversibile e meno decisioni inutili. Non costruiamo l’agente con più funzioni: costruiamo quello di cui l’utente si fiderebbe anche se esistesse un’alternativa tecnicamente migliore.”
+“The advantage is not the number of features. It is a behavioral memory specific to each person: approvals, rejections, corrections and time decay. After months of real interactions, the agent is calibrated to the user instead of applying the same threshold to everyone.”
+
+### 4:40–5:00 — Honest close
+
+“This prototype does not make real payments, send emails or access health systems. It demonstrates the control model and the safety boundary. Everyday Agent is not trying to be the agent with the most features; it is trying to be the agent people can trust because it knows when to act, inform or ask.”
 
 ## Submission checklist
 
-- [ ] Pubblicare questo repository su GitHub/GitLab e inserire l'URL pubblico nel form.
-- [ ] Verificare che `LICENSE` sia visibile nel repository e nell'About: MIT.
-- [ ] Verificare che README e `ARCHITECTURE.md` siano visibili senza accesso locale.
-- [ ] Registrare il video demo entro 5 minuti, mostrando il progetto funzionante.
-- [ ] Dichiarare nel video quali parti sono simulate e quali sono implementate.
-- [ ] Inserire il proprio AWS Builder ID nel form ufficiale dell'hackathon.
-- [ ] Non pubblicare segreti, password, database locali o file `.everyday-memory.json`.
-- [ ] Aggiungere l'URL pubblico del repository alla submission, non l'URL `127.0.0.1` della preview.
+- [ ] Make the GitHub repository public and provide its URL in the hackathon form.
+- [ ] Confirm `LICENSE` is visible and detected as MIT in the repository.
+- [ ] Confirm `README.md` and `ARCHITECTURE.md` render publicly.
+- [ ] Record a demo video no longer than five minutes.
+- [ ] State clearly in the video which capabilities are local and which integrations are simulated.
+- [ ] Add the AWS Builder ID to the official form if requested.
+- [ ] Do not publish passwords, tokens, `.env` files, databases, browser memory or personal data.
+- [ ] Submit the public repository URL, not the local `127.0.0.1` preview URL.

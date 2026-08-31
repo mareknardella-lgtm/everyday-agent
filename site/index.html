@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Everyday Agent — Trust-first personal agent that reduces mental load</title>
+    <meta name="description" content="Everyday Agent handles your daily tasks without creating anxiety. Dynamic trust engine learns when to act and when to ask. Built for families and individuals." />
+    <meta name="theme-color" content="#05070d" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://everydayagent.com/site/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Everyday Agent — Trust-first personal agent" />
+    <meta property="og:description" content="Handles daily tasks without creating anxiety. Dynamic trust engine learns when to act and when to ask." />
+    <meta property="og:image" content="https://everydayagent.com/site/favicon.svg" />
+    <meta property="og:url" content="https://everydayagent.com/site/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="it_IT" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Everyday Agent — Trust-first personal agent" />
+    <meta name="twitter:description" content="Handles daily tasks without creating anxiety. Dynamic trust engine learns when to act and when to ask." />
+
+    <link rel="icon" type="image/svg+xml" href="/site/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/site/site-styles.css" />
+  </head>
+  <body>
+    <header class="site-header glass-surface">
+      <div class="site-header-inner">
+        <a href="/site/" class="brand-link" aria-label="Everyday Agent home">
+          <span class="brand-mark-sm"><span></span><span></span><span></span></span>
+          <span class="brand-name">Everyday <strong>Agent</strong></span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="/site/faq/">FAQ</a>
+          <a href="/app/" class="site-nav-cta">Open Dashboard →</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="container">
+          <span class="eyebrow">Dynamic Trust Engine · Privacy-first · No notifications overload</span>
+          <h1>Your daily tasks.<br /><span class="gradient-text">Handled without the noise.</span></h1>
+          <p class="hero-sub">Everyday Agent is a personal agent that learns when to act silently, when to inform, and when to ask — based on a trust score specific to every action, person and context. No generic thresholds. No notification anxiety.</p>
+          <div class="hero-cta-row">
+            <a href="/app/" class="btn-primary btn-lg">Start Free</a>
+            <a href="/site/faq/" class="btn-outline">See how it works</a>
+          </div>
+          <p class="hero-note">In this demo, state stays in your browser. External integrations are disabled; the public site may request hosted fonts.</p>
+        </div>
+      </section>
+
+      <!-- Problem -->
+      <section class="section problem-section">
+        <div class="container">
+          <span class="eyebrow">The Problem</span>
+          <h2>Another chatbot isn't the answer.</h2>
+          <p class="section-lead">People don't need more notifications. They need something that handles repetitive work without creating anxiety. Fixed thresholds don't work — you trust your plumber for €300 but not a new provider for €20.</p>
+          <div class="problem-cards">
+            <div class="glass-card">
+              <span class="card-icon">⊘</span>
+              <h3>Fixed thresholds fail</h3>
+              <p>"Above €50, ask" is a rule that treats every provider and every context the same. It doesn't reflect real trust.</p>
+            </div>
+            <div class="glass-card">
+              <span class="card-icon">ༀ</span>
+              <h3>Notifications create anxiety</h3>
+              <p>Every approval request is a decision. More decisions = more mental load. The opposite of what an agent should do.</p>
+            </div>
+            <div class="glass-card">
+              <span class="card-icon">◫</span>
+              <h3>No explainability</h3>
+              <p>When the agent acts on its own, you can't ask why. Opacity destroys trust. Without trust, you disable everything.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Solution: Trust Engine -->
+      <section class="section trust-section">
+        <div class="container">
+          <span class="eyebrow">The Dynamic Trust Engine</span>
+          <h2>One trust score per combination.</h2>
+          <p class="section-lead">Not a fixed threshold. A continuous 0–100 score for every combination of action + counterparty + context. It starts cautious and self-calibrates through your real interactions.</p>
+
+          <div class="trust-demo">
+            <div class="trust-example glass-card" style="--trust: var(--trust-new)">
+              <div class="trust-header">
+                <span class="trust-badge new">New provider</span>
+                <span class="trust-score low">20/100</span>
+              </div>
+              <p>Faucet repair · New plumber · First time</p>
+              <span class="trust-action ask">→ Agent asks for confirmation</span>
+            </div>
+            <div class="trust-example glass-card" style="--trust: var(--trust-known)">
+              <div class="trust-header">
+                <span class="trust-badge learned">Known provider</span>
+                <span class="trust-score mid">65/100</span>
+              </div>
+              <p>Monthly electricity · Same provider · 12 approvals</p>
+              <span class="trust-action inform">→ Agent informs in digest</span>
+            </div>
+            <div class="trust-example glass-card" style="--trust: var(--trust-high)">
+              <div class="trust-header">
+                <span class="trust-badge trusted">Trusted combo</span>
+                <span class="trust-score high">92/100</span>
+              </div>
+              <p>Grocery order · Usual store · Weekly</p>
+              <span class="trust-action act">→ Agent executes silently (within cap)</span>
+            </div>
+          </div>
+
+          <div class="trust-caps glass-card">
+            <span class="cap-icon">◈</span>
+            <div>
+              <strong>Safety caps are absolute</strong>
+              <p>Money, health and legal documents always have hard ceilings — even with trust 100/100. The trust engine never overwrites these protections.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Domains -->
+      <section class="section domains-section">
+        <div class="container">
+          <span class="eyebrow">Five domains, one agent</span>
+          <h2>Organize your whole life.</h2>
+          <p class="section-lead">Home, money, health, errands, family — each with its own trust profile, permissions and autonomy rules.</p>
+          <div class="domains-grid">
+            <div class="domain-card glass-card">
+              <span class="domain-icon-home">⌂</span>
+              <h3>Home</h3>
+              <p>Maintenance, utilities, inventory. Never miss a filter change or a warranty deadline.</p>
+            </div>
+            <div class="domain-card glass-card">
+              <span class="domain-icon-money">€</span>
+              <h3>Money</h3>
+              <p>Budgets, payments, spending tracking. Clear numbers, decisions only when needed.</p>
+            </div>
+            <div class="domain-card glass-card">
+              <span class="domain-icon-health">+</span>
+              <h3>Health</h3>
+              <p>Reminders for appointments and prescriptions. No clinical advice, ever.</p>
+            </div>
+            <div class="domain-card glass-card">
+              <span class="domain-icon-errands">⌑</span>
+              <h3>Errands</h3>
+              <p>Grocery lists, deliveries, bookings. Things done without interrupting you.</p>
+            </div>
+            <div class="domain-card glass-card">
+              <span class="domain-icon-family">◌</span>
+              <h3>Family</h3>
+              <p>School deadlines, shared calendars, role-based permissions. Everyone on the same page.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section class="section features-section">
+        <div class="container">
+          <span class="eyebrow">Built-in governance</span>
+          <h2>Every decision, explained.</h2>
+          <div class="features-grid">
+            <div class="feature-item glass-card">
+              <span class="feature-icon">◈</span>
+              <h3>Explainability</h3>
+              <p>Ask "why did you do that?" and get a clear answer with the exact rule that was applied.</p>
+            </div>
+            <div class="feature-item glass-card">
+              <span class="feature-icon">◧</span>
+              <h3>Audit trail</h3>
+              <p>Every action is logged with timestamp, reasoning, trust score at the time, and outcome.</p>
+            </div>
+            <div class="feature-item glass-card">
+              <span class="feature-icon">↺</span>
+              <h3>Undo & rollback</h3>
+              <p>Mistakes happen. Reverse any action with one click, no context reconstruction needed.</p>
+            </div>
+            <div class="feature-item glass-card">
+              <span class="feature-icon">▯</span>
+              <h3>Family permissions</h3>
+              <p>Role-based access: who can approve what. Teenagers don't authorize spending.</p>
+            </div>
+            <div class="feature-item glass-card">
+              <span class="feature-icon">◷</span>
+              <h3>Smart Do Not Disturb</h3>
+              <p>Detects when you're busy and raises the notification threshold automatically.</p>
+            </div>
+            <div class="feature-item glass-card">
+              <span class="feature-icon">◇</span>
+              <h3>Privacy controls</h3>
+              <p>Export, delete, domain-level consent and clear limits. The prototype is not a legal certification.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section class="section how-section">
+        <div class="container">
+          <span class="eyebrow">In 30 seconds</span>
+          <h2>How it works.</h2>
+          <div class="how-steps">
+            <div class="how-step">
+              <span class="step-number">1</span>
+              <h3>Onboard</h3>
+              <p>Enter your name, accept boundaries. The agent starts with zero trust everywhere.</p>
+            </div>
+            <div class="how-step-arrow">→</div>
+            <div class="how-step">
+              <span class="step-number">2</span>
+              <h3>Interact</h3>
+              <p>Approve, reject, correct. Each interaction updates the trust score for that specific combination.</p>
+            </div>
+            <div class="how-step-arrow">→</div>
+            <div class="how-step">
+              <span class="step-number">3</span>
+              <h3>Trust builds</h3>
+              <p>Familiar combos get more autonomy. Unfamiliar ones always ask. You control the pace.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section cta-section">
+        <div class="container">
+          <div class="cta-box glass-card">
+            <h2>Ready to try it?</h2>
+            <p>Open the demo dashboard. State stays in your browser and no account is needed. This prototype is not a production service or a legal guarantee.</p>
+            <a href="/app/" class="btn-primary btn-lg">Open Dashboard →</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <span class="brand-mark-sm"><span></span><span></span><span></span></span>
+          <span class="brand-name">Everyday <strong>Agent</strong></span>
+        </div>
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <a href="/site/">Home</a>
+          <a href="/site/faq/">FAQ</a>
+          <a href="/app/">Dashboard</a>
+          <a href="/site/legal/">Legal & privacy</a>
+        </nav>
+        <p class="footer-copy">Trust-first personal agent. MIT License.</p>
+      </div>
+    </footer>
+  </body>
+</html>
