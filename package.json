@@ -1,0 +1,24 @@
+{
+  "name": "everyday-agent",
+  "version": "1.0.0",
+  "description": "Everyday Agent — AI-powered daily life assistant with Dynamic Trust Engine",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node preview-server.mjs",
+    "test": "node test_ai_server.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ai-agent",
+    "trust-engine",
+    "rag",
+    "tinylama",
+    "faiss",
+    "hackathon"
+  ],
+  "author": "Marek Nardella",
+  "license": "MIT"
+}
