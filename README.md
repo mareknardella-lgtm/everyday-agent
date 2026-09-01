@@ -99,6 +99,10 @@ py -3 lifecycle_simulation.py --days 365 --seed 20260831 --output simulation-rep
 
 The dashboard also exposes the simulator under **Governance → Pre-launch Lab**, where you can customize the synthetic user, household, income, trusted provider and habits. The scenario uses synthetic data only.
 
+## Architecture diagram
+
+The full architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md). It includes the client, policy core, Dynamic Trust Engine, persistence, optional local API, simulation lab and the blocked external side-effect boundary. A standalone SVG version is available at [architecture-diagram.svg](architecture-diagram.svg) for slides and the hackathon submission.
+
 ## Repository map
 
 ```text

@@ -891,6 +891,26 @@ const backend = {
   status: "Backend locale non rilevato: la dashboard resta sul dispositivo."
 };
 
+const AI_SERVER = window.EVERYDAY_AGENT_AI || "http://127.0.0.1:4180";
+let aiSessionId = localStorage.getItem("ea-ai-session") || crypto.randomUUID?.() || `ai-${Date.now()}`;
+localStorage.setItem("ea-ai-session", aiSessionId);
+
+async function callAIServer(endpoint, body = {}) {
+  try {
+    const response = await fetch(`${AI_SERVER}${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...body, sessionId: aiSessionId }),
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!response.ok) throw new Error(`AI server responded with ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.warn("AI server unavailable, using local classifier:", error.message);
+    return null;
+  }
+}
+
 function todayKey() {
   const date = new Date();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -1665,8 +1685,27 @@ function trustInteractionLatency(task) {
   return createdAt ? Math.max(0, (Date.now() - createdAt.getTime()) / 1000) : null;
 }
 
-function handleAssistantRequest(message) {
+async function handleAssistantRequest(message) {
   const normalized = message.toLowerCase().trim();
+
+  // Try AI server first for richer responses
+  const aiResponse = await callAIServer("/api/chat", { message, state: { trustProfiles: state.trustProfiles, customTasks: state.customTasks.slice(0, 10), userName: state.userName, calibrationDaysRemaining: state.calibrationDaysRemaining || 0, notificationsToday: state.notificationsToday || 0 } });
+  if (aiResponse && aiResponse.text) {
+    const llmBadge = aiResponse.source === "llm" ? "\n\n_🧠 Powered by TinyLlama 1.1B • RAG on " + (aiResponse.sources?.length || 0) + " sources" : "";
+    appendAssistantMessage(aiResponse.text + llmBadge);
+    if (aiResponse.task && aiResponse.task.status === "awaiting_decision") {
+      state.customTasks.unshift({ id: createTaskId(), title: aiResponse.task.title, category: aiResponse.task.domain, action: aiResponse.task.intent, actionType: aiResponse.task.intent, counterparty: aiResponse.task.counterparty, trustContext: aiResponse.task.domain, trustScore: aiResponse.task.trustScore, level: aiResponse.task.level, dynamicSpendLimit: aiResponse.task.dynamicSpendLimit, reason: aiResponse.task.reason, status: "pending", createdAt: new Date().toISOString() });
+      renderCustomTasks();
+      updateDecisionCount();
+    } else if (aiResponse.task && aiResponse.task.autoExecuted) {
+      state.customTasks.unshift({ id: createTaskId(), title: aiResponse.task.title, category: aiResponse.task.domain, action: aiResponse.task.intent, actionType: aiResponse.task.intent, counterparty: aiResponse.task.counterparty, trustScore: aiResponse.task.trustScore, level: 1, status: "completed", explanation: aiResponse.task.explanation, createdAt: new Date().toISOString() });
+      state.completed = Number(state.completed || 0) + 1;
+      saveState();
+      renderCustomTasks();
+    }
+    return;
+  }
+  // Fallback to local classifier
   const requestedTitle = normalized.replace(/^(perché|perche|annulla|annullare|rifai|ripeti)\s*/, "").trim();
   if (/^(perché|perche)/.test(normalized)) {
     const target = state.customTasks.find((task) => requestedTitle && task.title.toLowerCase().includes(requestedTitle)) || state.customTasks.find((task) => task.status === "completed" || task.status === "approved");
@@ -2137,13 +2176,20 @@ function setupGrocery() {
 function setupAssistant() {
   const form = document.getElementById("assistantForm");
   const input = document.getElementById("assistantInput");
-  form?.addEventListener("submit", (event) => {
+  form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const message = input.value.trim();
     if (!message) return;
     appendAssistantMessage(message, "user-message");
     input.value = "";
-    window.setTimeout(() => handleAssistantRequest(message), 180);
+    const thinkingNode = document.createElement("div");
+    thinkingNode.className = "assistant-message agent-message thinking";
+    thinkingNode.textContent = "🧠 Connecting to TinyLlama...";
+    const messages = document.getElementById("assistantMessages");
+    messages?.appendChild(thinkingNode);
+    messages.scrollTop = messages.scrollHeight;
+    await handleAssistantRequest(message);
+    thinkingNode.remove();
   });
   document.getElementById("assistantFab")?.addEventListener("click", () => {
     document.getElementById("assistantCard")?.scrollIntoView({ behavior: "smooth", block: "center" });

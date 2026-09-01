@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Trust Engine — Live Demo | Everyday Agent</title>
+<meta name="description" content="Interactive demo of the Dynamic Trust Engine. See how trust scores change in real-time based on your actions." />
+<link rel="icon" type="image/svg+xml" href="/site/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #05070d;
+    --bg-deep: #02040a;
+    --panel: rgba(16, 35, 62, .78);
+    --panel-soft: rgba(8, 18, 34, .58);
+    --line: rgba(133, 186, 255, .17);
+    --line-strong: rgba(133, 186, 255, .34);
+    --ink: #eef6ff;
+    --ink-soft: #b8cae0;
+    --ink-muted: #7186a5;
+    --blue: #65b9ff;
+    --cyan: #51e4dc;
+    --violet: #9d8cff;
+    --orange: #ffb45c;
+    --red: #ff7187;
+    --radius: 22px;
+    --radius-sm: 14px;
+    --radius-xs: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    min-height: 100%;
+    background: var(--bg-deep);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    font-family: "DM Sans", "Segoe UI", sans-serif;
+    color: var(--ink);
+    background: radial-gradient(circle at 80% -10%, rgba(30, 94, 160, .28), transparent 38%),
+                radial-gradient(circle at 10% 20%, rgba(38, 45, 120, .2), transparent 32%),
+                var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; font: inherit; border: 0; background: 0; color: inherit; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---- Glass ---- */
+  .glass-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(145deg, var(--panel), var(--panel-soft));
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .16), inset 0 1px 0 rgba(255, 255, 255, .035);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+  }
+
+  /* ---- Header ---- */
+  .page-header {
+    padding: 60px 0 40px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 800;
+    letter-spacing: -.04em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  h1 .gradient-text {
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--ink-muted);
+    font-size: 15px;
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ---- Scenario bar ---- */
+  .scenario-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 32px 0 24px;
+  }
+
+  .scenario-btn {
+    padding: 10px 18px;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    background: var(--panel-soft);
+    color: var(--ink-muted);
+    font-size: 12px;
+    transition: all .25s;
+  }
+
+  .scenario-btn.active {
+    border-color: var(--cyan);
+    background: rgba(81, 228, 220, .08);
+    color: var(--cyan);
+  }
+
+  .scenario-btn:hover {
+    border-color: var(--line-strong);
+    color: var(--ink-soft);
+  }
+
+  /* ---- Grid ---- */
+  .demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    padding-bottom: 64px;
+  }
+
+  @media (max-width: 780px) {
+    .demo-grid { grid-template-columns: 1fr; }
+  }
+
+  .card-inner { padding: 24px; }
+
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+  }
+
+  /* ---- Gauge ---- */
+  .gauge-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 0 16px;
+  }
+
+  .gauge {
+    position: relative;
+    width: 210px;
+    height: 210px;
+  }
+
+  .gauge svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+  }
+
+  .gauge-bg {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 12;
+  }
+
+  .gauge-fill {
+    fill: none;
+    stroke: url(#gaugeGrad);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 565.48;
+    stroke-dashoffset: 565.48;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.4, 0, .2, 1);
+  }
+
+  .gauge-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gauge-score {
+    font-family: "Manrope", sans-serif;
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1;
+    transition: color .5s;
+  }
+
+  .gauge-sub {
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+
+  .level-badge {
+    margin-top: 18px;
+    padding: 8px 20px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all .5s;
+  }
+
+  .lvl-1 { background: rgba(81, 228, 220, .1); color: var(--cyan); border: 1px solid rgba(81, 228, 220, .25); }
+  .lvl-2 { background: rgba(255, 180, 92, .08); color: var(--orange); border: 1px solid rgba(255, 180, 92, .22); }
+  .lvl-3 { background: rgba(255, 113, 135, .08); color: var(--red); border: 1px solid rgba(255, 113, 135, .22); }
+
+  /* ---- Actions ---- */
+  .action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .act-btn {
+    flex: 1;
+    padding: 13px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--panel-soft);
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all .25s;
+    text-align: center;
+  }
+
+  .act-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  }
+
+  .act-btn.ok { border-color: rgba(81, 228, 220, .25); }
+  .act-btn.ok:hover { background: rgba(81, 228, 220, .08); border-color: rgba(81, 228, 220, .4); color: var(--cyan); }
+  .act-btn.no { border-color: rgba(255, 113, 135, .25); }
+  .act-btn.no:hover { background: rgba(255, 113, 135, .08); border-color: rgba(255, 113, 135, .4); color: var(--red); }
+  .act-btn.rst { flex: .45; }
+
+  /* ---- Outcome ---- */
+  .outcome {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 180, 92, .15);
+    background: rgba(255, 180, 92, .04);
+    margin-top: 16px;
+  }
+
+  .outcome-head {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+
+  .outcome-body {
+    font-size: 12px;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+
+  /* ---- History ---- */
+  .history-canvas {
+    width: 100%;
+    height: 180px;
+    border-radius: var(--radius-xs);
+    background: rgba(2, 4, 10, .35);
+  }
+
+  /* ---- Safety caps ---- */
+  .caps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .cap {
+    text-align: center;
+    padding: 14px 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: rgba(2, 4, 10, .25);
+  }
+
+  .cap-icon { font-size: 22px; margin-bottom: 6px; }
+
+  .cap-val {
+    font-family: "Manrope", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--red);
+  }
+
+  .cap-lbl {
+    font-size: 9px;
+    color: var(--ink-muted);
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cap-bar {
+    height: 4px;
+    background: rgba(255, 113, 135, .12);
+    border-radius: 99px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .cap-fill {
+    height: 100%;
+    background: var(--red);
+    border-radius: 99px;
+    transition: width 1.2s cubic-bezier(.4, 0, .2, 1);
+  }
+
+  .cap-note {
+    margin-top: 14px;
+    font-size: 10px;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  /* ---- Event log ---- */
+  .ev-log {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+
+  .ev-log::-webkit-scrollbar { width: 3px; }
+  .ev-log::-webkit-scrollbar-track { background: transparent; }
+  .ev-log::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; }
+
+  .ev {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(133, 186, 255, .06);
+    font-size: 11px;
+    animation: fadeUp .35s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ev-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .ev-dot.ok { background: var(--cyan); }
+  .ev-dot.no { background: var(--red); }
+  .ev-dot.info { background: var(--blue); }
+
+  .ev-txt { color: var(--ink-muted); flex: 1; }
+
+  .ev-d {
+    font-weight: 700;
+    font-family: "Manrope", sans-serif;
+    font-size: 12px;
+  }
+
+  .ev-d.up { color: var(--cyan); }
+  .ev-d.dn { color: var(--red); }
+
+  /* ---- Footer ---- */
+  .page-footer {
+    text-align: center;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+    color: var(--ink-muted);
+    font-size: 11px;
+  }
+
+  .page-footer a { color: var(--cyan); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header class="page-header">
+    <div class="eyebrow">Everyday Agent · Live Demo</div>
+    <h1>The <span class="gradient-text">Dynamic Trust Engine</span></h1>
+    <p class="subtitle">
+      Not a fixed threshold. A continuous 0–100 score for every combination of
+      <strong style="color:var(--ink-soft)">action + counterparty + context</strong>.
+      Starts cautious, self-calibrates through your real interactions.
+    </p>
+  </header>
+
+  <div class="scenario-bar">
+    <button class="scenario-btn active" onclick="pick('plumber')">🔧 Plumber (new)</button>
+    <button class="scenario-btn" onclick="pick('electricity')">⚡ Electricity (known)</button>
+    <button class="scenario-btn" onclick="pick('grocery')">🛒 Grocery (trusted)</button>
+    <button class="scenario-btn" onclick="pick('health')">🏥 Doctor (sensitive)</button>
+  </div>
+
+  <div class="demo-grid">
+    <!-- Left -->
+    <div>
+      <div class="glass-card card-inner">
+        <div class="card-label">Trust Score · <span id="comboLabel">Faucet repair + New plumber + Home</span></div>
+
+        <div class="gauge-wrap">
+          <div class="gauge">
+            <svg viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ff7187"/>
+                  <stop offset="35%" stop-color="#ffb45c"/>
+                  <stop offset="70%" stop-color="#65b9ff"/>
+                  <stop offset="100%" stop-color="#51e4dc"/>
+                </linearGradient>
+              </defs>
+              <circle class="gauge-bg" cx="100" cy="100" r="90"/>
+              <circle class="gauge-fill" id="gCircle" cx="100" cy="100" r="90"/>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-score" id="gScore">20</div>
+              <div class="gauge-sub">out of 100</div>
+            </div>
+          </div>
+          <div class="level-badge lvl-3" id="gLevel">🔴 Level 3 — Asks for confirmation</div>
+        </div>
+
+        <div class="action-row">
+          <button class="act-btn ok" onclick="act('approve')">✅ Approve</button>
+          <button class="act-btn no" onclick="act('reject')">❌ Reject</button>
+          <button class="act-btn rst" onclick="reset()">↺</button>
+        </div>
+
+        <div class="outcome">
+          <div class="outcome-head">⏱ If you don't respond</div>
+          <div class="outcome-body" id="outText">The request expires in 48 hours and reappears in your next digest. No action is taken.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right -->
+    <div>
+      <div class="glass-card card-inner" style="margin-bottom:22px">
+        <div class="card-label">Trust History</div>
+        <canvas class="history-canvas" id="hCanvas"></canvas>
+      </div>
+
+      <div class="glass-card card-inner">
+        <div class="card-label">Safety Caps (Absolute Ceilings)</div>
+        <div class="caps">
+          <div class="cap">
+            <div class="cap-icon">💰</div>
+            <div class="cap-val">85</div>
+            <div class="cap-lbl">Money</div>
+            <div class="cap-bar"><div class="cap-fill" id="cMoney" style="width:0%"></div></div>
+          </div>
+          <div class="cap">
+            <div class="cap-icon">🏥</div>
+            <div class="cap-val">75</div>
+            <div class="cap-lbl">Health</div>
+            <div class="cap-bar"><div class="cap-fill" id="cHealth" style="width:0%"></div></div>
+          </div>
+          <div class="cap">
+            <div class="cap-icon">⚖️</div>
+            <div class="cap-val">60</div>
+            <div class="cap-lbl">Legal</div>
+            <div class="cap-bar"><div class="cap-fill" id="cLegal" style="width:0%"></div></div>
+          </div>
+        </div>
+        <p class="cap-note">Even at trust 100/100, these domains never reach silent execution. The trust engine never overwrites safety.</p>
+      </div>
+
+      <div class="glass-card card-inner" style="margin-top:22px">
+        <div class="card-label">Interaction Log</div>
+        <div class="ev-log" id="evLog">
+          <div class="ev">
+            <div class="ev-dot info"></div>
+            <span class="ev-txt">New combination started at baseline</span>
+            <span class="ev-d" style="color:var(--ink-muted)">20</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <p>Everyday Agent · Dynamic Trust Engine · <a href="/site/">Back to site</a> · <a href="/app/">Open Dashboard</a></p>
+    <p style="margin-top:4px">Prototype · No real payments or actions executed</p>
+  </footer>
+</div>
+
+<script>
+const C = 2 * Math.PI * 90;
+
+const S = {
+  plumber:     { label: 'Faucet repair + New plumber + Home',         init: 20,  dom: 'home',    cap: 100, ok: [{d:12,t:'Quick approval (< 1h)'},{d:12,t:'Quick approval (< 1h)'},{d:6,t:'Same-day approval'},{d:4,t:'Delayed approval (2 days)'}],   no: [{d:-30,t:'Rejection'}], out: { lo:'The request expires in 48 hours and reappears in your next digest. No action is taken.', mid:'Action included in your daily digest. You can review it there.', hi:'Executed silently within the dynamic limit. Traced and reversible.' }},
+  electricity: { label: 'Monthly bill + Enel + Money',               init: 45,  dom: 'money',   cap: 85,  ok: [{d:12,t:'Fast approval'},{d:12,t:'Fast approval'},{d:6,t:'Same-day'},{d:4,t:'Delayed'}],                          no: [{d:-30,t:'Rejection'}], out: { lo:'Request stays pending. You decide when to review it.', mid:'Included in digest. Agent informs after action.', hi:'Payment processed within cap. Agent informs in digest — never silent for money.' }},
+  grocery:     { label: 'Weekly order + Usual store + Errands',      init: 72,  dom: 'errands', cap: 95,  ok: [{d:4,t:'Routine approval'},{d:4,t:'Routine approval'},{d:4,t:'Routine approval'}],                                      no: [{d:-30,t:'Rejection'}], out: { lo:'Queued for next digest.', mid:'Added to digest with other errands.', hi:'Executed silently. Standard weekly order within dynamic limit.' }},
+  health:      { label: 'Prescription refill + Pharmacy + Health',   init: 30,  dom: 'health',  cap: 75,  ok: [{d:6,t:'Approval'},{d:6,t:'Approval'},{d:6,t:'Approval'}],                                                                no: [{d:-30,t:'Rejection'}], out: { lo:'Request pending. No medical action taken.', mid:'Reminder added to digest. No booking made.', hi:'Reminder created. Agent shows options but never books without explicit confirmation.' }}
+};
+
+let cur = 'plumber', sc, hist, oi, ru;
+
+function pick(k) {
+  cur = k; sc = S[k].init; hist = [sc]; oi = 0; ru = false;
+  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('comboLabel').textContent = S[k].label;
+  document.getElementById('evLog').innerHTML = '<div class="ev"><div class="ev-dot info"></div><span class="ev-txt">New combination started at baseline</span><span class="ev-d" style="color:var(--ink-muted)">'+sc+'</span></div>';
+  up();
+}
+
+function lvl(s, d) {
+  if (d==='money'||d==='health'||d==='legal') return s>=70?2:3;
+  return s>=70?1:s>=40?2:3;
+}
+
+const LT={1:'🟢 Level 1 — Executes silently',2:'🟡 Level 2 — Informs in digest',3:'🔴 Level 3 — Asks for confirmation'};
+const LC={1:'lvl-1',2:'lvl-2',3:'lvl-3'};
+
+function up() {
+  const o = C - (sc/100)*C;
+  document.getElementById('gCircle').style.strokeDashoffset = o;
+  document.getElementById('gScore').textContent = Math.round(sc);
+  const l = lvl(sc, S[cur].dom);
+  const b = document.getElementById('gLevel');
+  b.textContent = LT[l]; b.className = 'level-badge '+LC[l];
+  document.getElementById('outText').textContent = l===1?S[cur].out.hi:l===2?S[cur].out.mid:S[cur].out.lo;
+}
+
+function draw() {
+  const cv = document.getElementById('hCanvas');
+  const cx = cv.getContext('2d');
+  const dp = devicePixelRatio||1;
+  const rc = cv.getBoundingClientRect();
+  cv.width = rc.width*dp; cv.height = rc.height*dp;
+  cx.scale(dp,dp);
+  const w=rc.width, h=rc.height;
+  const p={t:20,r:14,b:28,l:36};
+  const pw=w-p.l-p.r, ph=h-p.t-p.b;
+  cx.clearRect(0,0,w,h);
+
+  // grid
+  cx.strokeStyle='rgba(133,186,255,.08)'; cx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=p.t+(ph/4)*i;
+    cx.beginPath(); cx.moveTo(p.l,y); cx.lineTo(w-p.r,y); cx.stroke();
+    cx.fillStyle='rgba(133,186,255,.3)'; cx.font='10px DM Sans'; cx.textAlign='right';
+    cx.fillText(Math.round(100-i*25),p.l-8,y+4);
+  }
+
+  // cap line
+  const cap=S[cur].cap;
+  const cy=p.t+ph*(1-cap/100);
+  cx.strokeStyle='rgba(255,113,135,.35)'; cx.setLineDash([4,4]);
+  cx.beginPath(); cx.moveTo(p.l,cy); cx.lineTo(w-p.r,cy); cx.stroke(); cx.setLineDash([]);
+  cx.fillStyle='rgba(255,113,135,.45)'; cx.font='9px DM Sans'; cx.textAlign='left';
+  cx.fillText('CAP '+cap,w-p.r-28,cy-6);
+
+  if(hist.length<2){
+    cx.fillStyle='rgba(133,186,255,.18)'; cx.font='12px DM Sans'; cx.textAlign='center';
+    cx.fillText('Click Approve or Reject to see the graph',w/2,h/2); return;
+  }
+
+  // line
+  const pts=hist.map((v,i)=>({x:p.l+(pw/Math.max(hist.length-1,1))*i,y:p.t+ph*(1-Math.min(v,100)/100)}));
+  const g=cx.createLinearGradient(p.l,0,w-p.r,0);
+  g.addColorStop(0,'rgba(101,185,255,.8)'); g.addColorStop(1,'rgba(81,228,220,.8)');
+  cx.strokeStyle=g; cx.lineWidth=2.5; cx.lineJoin='round';
+  cx.beginPath();
+  pts.forEach((pt,i)=>{i?cx.lineTo(pt.x,pt.y):cx.moveTo(pt.x,pt.y)});
+  cx.stroke();
+
+  // fill
+  cx.lineTo(pts[pts.length-1].x,p.t+ph); cx.lineTo(pts[0].x,p.t+ph); cx.closePath();
+  const fg=cx.createLinearGradient(0,p.t,0,p.t+ph);
+  fg.addColorStop(0,'rgba(101,185,255,.12)'); fg.addColorStop(1,'rgba(101,185,255,0)');
+  cx.fillStyle=fg; cx.fill();
+
+  // dots
+  pts.forEach((pt,i)=>{
+    cx.beginPath(); cx.arc(pt.x,pt.y,4,0,Math.PI*2);
+    cx.fillStyle=hist[i]>=(i?hist[i-1]:hist[i])?'#51e4dc':'#ff7187';
+    cx.fill(); cx.strokeStyle='rgba(5,7,13,.8)'; cx.lineWidth=2; cx.stroke();
+  });
+
+  // last glow
+  const la=pts[pts.length-1];
+  cx.beginPath(); cx.arc(la.x,la.y,7,0,Math.PI*2);
+  cx.strokeStyle='rgba(101,185,255,.4)'; cx.lineWidth=2; cx.stroke();
+}
+
+function capsUp(){
+  const m={money:85,health:75,legal:60};
+  for(const[k,v]of Object.entries(m)){
+    const e=document.getElementById('c'+k[0].toUpperCase()+k.slice(1));
+    if(e) e.style.width=(k===S[cur].dom?Math.min(sc/v*100,100):0)+'%';
+  }
+}
+
+function log(tp,txt,d){
+  const lg=document.getElementById('evLog');
+  const el=document.createElement('div'); el.className='ev';
+  el.innerHTML='<div class="ev-dot '+tp+'"></div><span class="ev-txt">'+txt+'</span><span class="ev-d '+(d>=0?'up':'dn')+'">'+(d>=0?'+':'')+Math.round(d)+'</span>';
+  lg.insertBefore(el,lg.firstChild);
+  while(lg.children.length>20) lg.removeChild(lg.lastChild);
+}
+
+function act(a){
+  const s=S[cur]; let d=0,t='';
+  if(a==='approve'){
+    if(oi<s.ok.length){d=s.ok[oi].d;t=s.ok[oi].t;oi++}else{d=2;t='Additional approval'}
+    log('ok',t,d);
+  } else {
+    d=ru?-15:s.no[0].d; t=ru?'Additional rejection':s.no[0].t; ru=true;
+    log('no',t,d);
+  }
+  sc=Math.max(0,Math.min(s.cap,sc+d)); hist.push(sc);
+  up(); draw(); capsUp();
+}
+
+function reset(){
+  sc=S[cur].init; hist=[sc]; oi=0; ru=false;
+  document.getElementById('evLog').innerHTML='<div class="ev"><div class="ev-dot info"></div><span class="ev-txt">Reset to baseline</span><span class="ev-d" style="color:var(--ink-muted)">'+sc+'</span></div>';
+  up(); draw(); capsUp();
+}
+
+addEventListener('load',()=>{up();draw();capsUp()});
+addEventListener('resize',draw);
+</script>
+</body>
+</html>

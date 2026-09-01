@@ -77,6 +77,15 @@ Show `ARCHITECTURE.md`: the UI, local state, optional backend, Dynamic Trust Eng
 
 “This prototype does not make real payments, send emails or access health systems. It demonstrates the control model and the safety boundary. Everyday Agent is not trying to be the agent with the most features; it is trying to be the agent people can trust because it knows when to act, inform or ask.”
 
+## Architecture diagram asset
+
+The repository includes both formats required for review:
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) with the detailed Mermaid diagram, component map, request lifecycle, security precedence, API path and simulation sequence.
+- [architecture-diagram.svg](architecture-diagram.svg), a standalone 1600x1100 visual suitable for slides or an image upload.
+
+The diagram makes the prototype boundary explicit: browser and local policy flows are implemented, the pre-launch lab is synthetic, and external side effects remain blocked because no provider credentials or live connectors are included.
+
 ## Submission checklist
 
 - [ ] Make the GitHub repository public and provide its URL in the hackathon form.
