@@ -2,6 +2,7 @@
   "name": "everyday-agent",
   "version": "1.0.0",
   "description": "Everyday Agent — AI-powered daily life assistant with Dynamic Trust Engine",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

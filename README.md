@@ -57,7 +57,7 @@ Requirements:
 From the repository root:
 
 ```bash
-node preview-server.mjs
+npm run dev
 ```
 
 Open:
@@ -65,6 +65,14 @@ Open:
 ```text
 http://127.0.0.1:4173/
 ```
+
+For the production-style unified server (the same entry point used by Railway):
+
+```bash
+npm start
+```
+
+The server respects Railway's `PORT` environment variable, listens on `0.0.0.0`, serves the dashboard and landing site, and exposes `/api/health` for deployment checks. The public Node server intentionally uses the lightweight local policy engine; the optional TinyLlama + FAISS RAG remains a separate local Python service.
 
 Useful routes:
 
@@ -74,6 +82,12 @@ Useful routes:
 - `http://127.0.0.1:4173/app/` — dashboard entry point
 
 You can also open `index.html` with VS Code Live Server. The root entry point forwards to the current dashboard in `app/`; the full simulation endpoint requires `preview-server.mjs`.
+
+## Deploy the public demo
+
+The repository includes `server.js`, `package.json` and `railway.json` for a single-service Railway deployment. Railway should run `npm start` and check `/api/health`. No secrets or third-party credentials are required for this prototype.
+
+The hosted service is a demonstration of the local policy and trust engine. It does not perform payments, send emails, access healthcare records or contact vendors. TinyLlama + FAISS RAG is intentionally kept local because the model and indexed documents are not part of the web deployment.
 
 ## Run the optional local backend
 
@@ -112,6 +126,8 @@ everyday_agent.py          Core policy and Dynamic Trust Engine
 api_server.py              Optional local backend with auth and policy checks
 lifecycle_simulation.py    Deterministic multi-role pre-launch simulation
 preview-server.mjs         Dependency-free local web server and simulation route
+server.js                  Unified production server for local/Railway hosting
+railway.json               Railway start command and health-check configuration
 test_*.py                  Automated tests
 ARCHITECTURE.md            Mermaid architecture diagram
 SUBMISSION.md              Hackathon description and five-minute demo script
