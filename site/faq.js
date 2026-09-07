@@ -1,4 +1,4 @@
-// Everyday Agent FAQ interactions: external script so the public CSP can disallow inline JavaScript.
+// Hermes AI FAQ interactions: external script so the public CSP can disallow inline JavaScript.
 document.querySelectorAll('.faq-question').forEach(function (button) {
   button.addEventListener('click', function () {
     var item = button.closest('.faq-item');

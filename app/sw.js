@@ -1,4 +1,4 @@
-const CACHE_NAME = "everyday-agent-shell-v3";
+const CACHE_NAME = "hermes-ai-shell-v4";
 const SHELL = ["/", "/app/", "/app/index.html", "/app/styles.css", "/app/ops-overrides.css", "/app/simulation.css", "/app/app.js",  "/app/manifest.webmanifest",
   "/app/icons/everyday-agent-192.png",
   "/app/icons/everyday-agent-512.png",
@@ -24,7 +24,7 @@ self.addEventListener("fetch", (event) => {
 
 self.addEventListener("message", (event) => {
   if (event.data?.type !== "SCHEDULE_LOCAL_REMINDER") return;
-  const { title = "Everyday Agent", body = "Hai una scadenza da controllare.", delayMs = 0, tag = "everyday-agent-reminder" } = event.data;
+  const { title = "Hermes AI", body = "Hai una scadenza da controllare.", delayMs = 0, tag = "everyday-agent-reminder" } = event.data;
   const delay = Math.max(0, Math.min(Number(delayMs) || 0, 2147483647));
   setTimeout(() => self.registration.showNotification(title, { body, tag, icon: "/app/icons/everyday-agent-192.png", badge: "/app/icons/everyday-agent-monochrome.png", silent: false }), delay);
 });

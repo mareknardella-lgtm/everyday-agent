@@ -1,4 +1,4 @@
-# Everyday Agent — Devpost gallery
+# Hermes AI — Devpost gallery
 
 Upload the PNG files in numeric order. Each image is 1500×1000 px (3:2) and under 5 MB.
 

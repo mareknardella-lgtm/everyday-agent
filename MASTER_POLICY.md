@@ -1,4 +1,4 @@
-# Everyday Agent — Master Policy v1.1
+# Hermes AI — Master Policy v1.1
 
 Questa versione incorpora le correzioni emerse dalla simulazione deterministica di 6-12 mesi descritta in [`PRELAUNCH_SIMULATION.md`](PRELAUNCH_SIMULATION.md). È una policy di prodotto da verificare con revisione legale, privacy e sicurezza prima del deployment.
 

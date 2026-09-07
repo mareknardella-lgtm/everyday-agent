@@ -1,10 +1,10 @@
-# Everyday Agent - Legal and Compliance Baseline
+# Hermes AI - Legal and Compliance Baseline
 
 > **Important:** this is a product and engineering checklist, not legal advice and not a warranty of compliance. It cannot make the product lawsuit-proof. A qualified lawyer in each target market must review the final product, contracts, data flows, marketing claims and deployment model before any public launch.
 
 ## Current status
 
-Everyday Agent in this repository is a local development demo. It does not connect to banks, email, calendars, healthcare systems or vendors, and its execution gateway does not perform external actions. The simulation and UI are not evidence that a production service is compliant or safe.
+Hermes AI in this repository is a local development demo. It does not connect to banks, email, calendars, healthcare systems or vendors, and its execution gateway does not perform external actions. The simulation and UI are not evidence that a production service is compliant or safe.
 
 The following claims must not be made without evidence and legal approval:
 

@@ -1,5 +1,5 @@
 """
-Everyday Agent — LLM API Server
+Hermes AI — LLM API Server
 Exposes the RAG engine (TinyLlama + FAISS) as an HTTP API for the dashboard.
 Run: py -3 llm_server.py [--port 4181]
 API: http://127.0.0.1:4181/api/
@@ -150,7 +150,7 @@ class LLMHandler(BaseHTTPRequestHandler):
 
             # Build classification prompt
             classify_prompt = (
-                f"Based on this context from the Everyday Agent policy:\n{context}\n\n"
+                f"Based on this context from the Hermes AI policy:\n{context}\n\n"
                 f"Classify this user request into a domain (home/money/health/errands/family) "
                 f"and determine the autonomy level (1=execute silently, 2=execute and inform, "
                 f"3=ask first). Return JSON with keys: domain, level, reason.\n\n"
@@ -207,7 +207,7 @@ def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 4181
 
     # Pre-initialize RAG in background thread
-    print(f"\n  🧠 Everyday Agent LLM Server")
+    print(f"\n  🧠 Hermes AI LLM Server")
     print(f"  ────────────────────────────")
 
     def init_background():

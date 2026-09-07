@@ -2,7 +2,7 @@
 
 ## Text description
 
-Everyday Agent is a trust-first personal operating system for people and families who want less mental load without giving up control. It organizes home, money, health, errands, family, calendar and support workflows in one dark operations dashboard.
+Hermes AI is a trust-first personal operating system for people and families who want less mental load without giving up control. It organizes home, money, health, errands, family, calendar and support workflows in one dark operations dashboard.
 
 Its differentiator is the **Dynamic Trust Engine**. Instead of using a generic rule such as “ask above €50”, it calculates a separate 0–100 trust score for each combination of action, counterparty and context. A new combination starts at 20/100. Fast approvals raise trust, slow responses raise it less, rejections reduce it sharply and inactivity makes trust decay toward the cautious baseline. Safety caps, consent, family permissions and manual mode always override trust.
 
@@ -17,7 +17,7 @@ The current submission is an offline local prototype. It includes working local 
 
 ## Why it matters
 
-Traditional assistants optimize for more features or more engagement. Everyday Agent optimizes for useful silence: it handles low-risk work without unnecessary interruption and surfaces only decisions that genuinely need a person. Trust becomes personal, explainable and reversible instead of being a fixed threshold applied to everyone.
+Traditional assistants optimize for more features or more engagement. Hermes AI optimizes for useful silence: it handles low-risk work without unnecessary interruption and surfaces only decisions that genuinely need a person. Trust becomes personal, explainable and reversible instead of being a fixed threshold applied to everyone.
 
 ## How to run
 
@@ -49,7 +49,7 @@ py -3 lifecycle_simulation.py --days 365 --seed 20260831 --output simulation-rep
 
 ### 0:35–1:05 — Users and value
 
-“Everyday Agent is for people and families managing home, deadlines, money and daily commitments. It works quietly when the risk is low and asks for a real decision only when one is needed.”
+“Hermes AI is for people and families managing home, deadlines, money and daily commitments. It works quietly when the risk is low and asks for a real decision only when one is needed.”
 
 ### 1:05–2:25 — Working demo
 
@@ -75,7 +75,7 @@ Show `ARCHITECTURE.md`: the UI, local state, optional backend, Dynamic Trust Eng
 
 ### 4:40–5:00 — Honest close
 
-“This prototype does not make real payments, send emails or access health systems. It demonstrates the control model and the safety boundary. Everyday Agent is not trying to be the agent with the most features; it is trying to be the agent people can trust because it knows when to act, inform or ask.”
+“This prototype does not make real payments, send emails or access health systems. It demonstrates the control model and the safety boundary. Hermes AI is not trying to be the agent with the most features; it is trying to be the agent people can trust because it knows when to act, inform or ask.”
 
 ## Architecture diagram asset
 

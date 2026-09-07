@@ -1,4 +1,4 @@
-"""Pre-launch lifecycle simulation for Everyday Agent.
+"""Pre-launch lifecycle simulation for Hermes AI.
 
 The simulator is intentionally deterministic and offline. It models four
 roles: a fallible user, the operating agent, support, and an adversary. It
@@ -355,7 +355,7 @@ def run_simulation(days: int = 365, seed: int = 20260831, scenario: Optional[Dic
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Everyday Agent pre-launch lifecycle simulation")
+    parser = argparse.ArgumentParser(description="Hermes AI pre-launch lifecycle simulation")
     parser.add_argument("--days", type=int, default=365, help="giorni simulati (180-730)")
     parser.add_argument("--seed", type=int, default=20260831)
     parser.add_argument("--scenario-json", default="{}", help="configurazione JSON dello scenario sintetico")

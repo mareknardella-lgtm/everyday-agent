@@ -1,4 +1,4 @@
-"""Backend locale trust-first per Everyday Agent.
+"""Backend locale trust-first per Hermes AI.
 
 Questa è una base di sviluppo, non un servizio finanziario/sanitario in produzione:
 - SQLite conserva account, workspace, sessioni, stato dashboard, task e audit;
@@ -1027,7 +1027,7 @@ def create_server(settings: ServerSettings) -> ThreadingHTTPServer:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Backend locale sicuro di sviluppo per Everyday Agent")
+    parser = argparse.ArgumentParser(description="Backend locale sicuro di sviluppo per Hermes AI")
     parser.add_argument("--host", default=os.environ.get("EVERYDAY_AGENT_HOST", "127.0.0.1"))
     parser.add_argument("--port", type=int, default=int(os.environ.get("EVERYDAY_AGENT_PORT", "4174")))
     parser.add_argument("--database", type=Path, default=Path(os.environ.get("EVERYDAY_AGENT_DB", "data/everyday-agent.db")))
@@ -1049,7 +1049,7 @@ def main() -> None:
     if "EVERYDAY_AGENT_SESSION_SECRET" not in os.environ:
         print("NOTA: EVERYDAY_AGENT_SESSION_SECRET non impostato; le sessioni vengono invalidate al riavvio.")
     server = create_server(settings)
-    print(f"Everyday Agent API: http://{settings.host}:{settings.port}{' (dashboard inclusa)' if settings.static_root else ''}")
+    print(f"Hermes AI API: http://{settings.host}:{settings.port}{' (dashboard inclusa)' if settings.static_root else ''}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

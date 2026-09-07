@@ -1,5 +1,5 @@
 """
-Everyday Agent — RAG Engine
+Hermes AI — RAG Engine
 Local retrieval-augmented generation using TinyLlama + FAISS + sentence-transformers.
 No API keys, no cloud, everything runs on your machine.
 """
@@ -165,7 +165,7 @@ def initialize(preload: bool = True):
         if _initialized:
             return
 
-        print("\n  Initializing Everyday Agent RAG Engine...")
+        print("\n  Initializing Hermes AI RAG Engine...")
         print("  Loading documents...")
         chunks = _load_documents()
         print(f"  Total chunks: {len(chunks)}")
@@ -239,7 +239,7 @@ def generate_response(
 
     if is_italian:
         system_prompt = (
-            "Sei Everyday Agent, un assistente AI che gestisce la vita quotidiana: "
+            "Sei Hermes AI, un assistente AI che gestisce la vita quotidiana: "
             "casa, soldi, salute, commissioni, famiglia. "
             "Rispondi SEMPRE in italiano. "
             "Sii CONCISO: max 3-4 frasi. "
@@ -249,7 +249,7 @@ def generate_response(
         )
     else:
         system_prompt = (
-            "You are Everyday Agent, a helpful AI assistant for managing daily life. "
+            "You are Hermes AI, a helpful AI assistant for managing daily life. "
             "Be CONCISE: max 3-4 sentences. "
             "Do NOT copy-paste document text. "
             "Answer directly and practically. "

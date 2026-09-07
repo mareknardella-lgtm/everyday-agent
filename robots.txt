@@ -1,4 +1,4 @@
-# Everyday Agent — robots.txt
+# Hermes AI — robots.txt
 # Allow all public pages, block private/app areas
 
 User-agent: *

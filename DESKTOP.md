@@ -1,6 +1,6 @@
 # Desktop e background
 
-Everyday Agent è già predisposta come PWA installabile e mantiene i dati locali offline tramite `app/sw.js`.
+Hermes AI è già predisposta come PWA installabile e mantiene i dati locali offline tramite `app/sw.js`.
 
 ## Cosa funziona ora
 

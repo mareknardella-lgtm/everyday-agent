@@ -1,4 +1,4 @@
-# Everyday Agent Architecture
+# Hermes AI Architecture
 
 This document describes the architecture of the local pre-launch prototype. It is deliberately explicit about what is implemented, what is simulated, and where real-world side effects are blocked.
 

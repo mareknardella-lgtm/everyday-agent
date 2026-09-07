@@ -1,6 +1,6 @@
 {
-  "name": "Everyday Agent",
-  "short_name": "Everyday Agent",
+  "name": "Hermes AI",
+  "short_name": "Hermes AI",
   "description": "A local trust-first everyday operations dashboard.",
   "start_url": "/app/",
   "scope": "/app/",

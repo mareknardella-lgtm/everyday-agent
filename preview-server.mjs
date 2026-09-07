@@ -173,7 +173,7 @@ const server = createServer(async (request, response) => {
 });
 
 server.listen(port, "127.0.0.1", () => {
-  console.log(`Everyday Agent preview: http://127.0.0.1:${port}`);
+  console.log(`Hermes AI preview: http://127.0.0.1:${port}`);
   console.log(`  Landing site: http://127.0.0.1:${port}/site/`);
   console.log(`  App dashboard: http://127.0.0.1:${port}/app/`);
   console.log(`  FAQ: http://127.0.0.1:${port}/site/faq/`);

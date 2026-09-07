@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
-  <title id="title">Everyday Agent detailed architecture</title>
-  <desc id="desc">Architecture of the local Everyday Agent prototype: browser PWA, dynamic trust engine, policy gate, persistence, optional local API, simulation lab, and blocked external side effects.</desc>
+  <title id="title">Hermes AI detailed architecture</title>
+  <desc id="desc">Architecture of the local Hermes AI prototype: browser PWA, dynamic trust engine, policy gate, persistence, optional local API, simulation lab, and blocked external side effects.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#070b14"/>
@@ -53,7 +53,7 @@
   </defs>
 
   <rect width="1600" height="1100" fill="url(#bg)"/>
-  <text x="50" y="48" class="title">Everyday Agent / Detailed Architecture</text>
+  <text x="50" y="48" class="title">Hermes AI / Detailed Architecture</text>
   <text x="50" y="74" class="subtitle">Local pre-launch prototype · trust-first decisioning · external side effects disabled</text>
   <rect x="1240" y="30" width="310" height="40" rx="20" fill="#15283b" stroke="#315578"/>
   <circle cx="1265" cy="50" r="7" fill="#5aa9ff"/>
@@ -326,5 +326,5 @@
   <text x="560" y="1086" class="legend">safety gate</text>
   <rect x="675" y="1075" width="14" height="14" rx="3" fill="#49322d" stroke="#e8b45e"/>
   <text x="700" y="1086" class="legend">external side effect disabled</text>
-  <text x="1110" y="1086" class="legend">Everyday Agent · local prototype · 2026</text>
+  <text x="1110" y="1086" class="legend">Hermes AI · local prototype · 2026</text>
 </svg>

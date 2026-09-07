@@ -1,15 +1,15 @@
-# Everyday Agent
+# Hermes AI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status: pre-launch prototype](https://img.shields.io/badge/status-pre--launch%20prototype-blue.svg)](LEGAL_COMPLIANCE_BASELINE.md)
 
-Everyday Agent is a trust-first personal operating system for people and families who want less mental load without giving up control. Instead of applying one generic rule to every task, it learns a separate trust score for each combination of **action, counterparty and context**.
+Hermes AI is a trust-first personal operating system for people and families who want less mental load without giving up control. Instead of applying one generic rule to every task, it learns a separate trust score for each combination of **action, counterparty and context**.
 
 > **Prototype disclosure:** this repository contains a local, pre-launch demo. It does not connect to banks, email, healthcare systems or vendors; it does not make payments, send messages, sign contracts or provide professional advice. Read [LEGAL_COMPLIANCE_BASELINE.md](LEGAL_COMPLIANCE_BASELINE.md) before using or presenting it.
 
 ## Why it matters
 
-Most assistants create another stream of notifications or use rigid thresholds such as “ask above €50”. Real trust is more specific: a user may trust a known plumber for €300 but not a new provider for €20. Everyday Agent starts cautiously and learns from approvals, rejections, hesitation and corrections while keeping absolute safety caps for money, health and legal documents.
+Most assistants create another stream of notifications or use rigid thresholds such as “ask above €50”. Real trust is more specific: a user may trust a known plumber for €300 but not a new provider for €20. Hermes AI starts cautiously and learns from approvals, rejections, hesitation and corrections while keeping absolute safety caps for money, health and legal documents.
 
 ## Who it is for
 

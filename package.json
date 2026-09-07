@@ -1,7 +1,7 @@
 {
-  "name": "everyday-agent",
+  "name": "hermes-ai",
   "version": "1.0.0",
-  "description": "Everyday Agent — AI-powered daily life assistant with Dynamic Trust Engine",
+  "description": "Hermes AI — trust-first daily life assistant with Dynamic Trust Engine",
   "type": "module",
   "main": "server.js",
   "scripts": {

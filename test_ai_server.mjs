@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Everyday Agent — AI Server Tests
+ * Hermes AI — AI Server Tests
  * 
  * Run: node test_ai_server.mjs
  * Expected: ALL 30 TESTS PASSED

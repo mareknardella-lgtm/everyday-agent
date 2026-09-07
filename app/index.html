@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#05070d" />
-    <title>Everyday Agent</title>
+    <title>Hermes AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -19,12 +19,12 @@
   <body>
     <div class="app-shell">
       <aside class="sidebar" aria-label="Navigazione principale">
-        <a class="brand" href="#dashboard" data-view-link="dashboard" aria-label="Everyday Agent, home">
+        <a class="brand" href="#dashboard" data-view-link="dashboard" aria-label="Hermes AI, home">
           <span class="brand-mark"><span></span><span></span><span></span></span>
-          <span class="brand-name">Everyday <strong>Agent</strong><small class="product-version">v0.9 · local</small></span>
+          <span class="brand-name">Hermes <strong>AI</strong><small class="product-version">v0.9 · local</small></span>
         </a>
 
-        <div class="workspace-switcher" role="button" tabindex="0" aria-label="Workspace selector"><span class="workspace-glyph">EA</span><span><strong>Personal workspace</strong><small>Local environment</small></span><span class="workspace-chevron">⌄</span></div>
+        <div class="workspace-switcher" role="button" tabindex="0" aria-label="Workspace selector"><span class="workspace-glyph">HA</span><span><strong>Personal workspace</strong><small>Local environment</small></span><span class="workspace-chevron">⌄</span></div>
 
         <div class="sidebar-section">
           <p class="nav-label" data-i18n="nav_workspace">Monitor</p>
@@ -58,7 +58,7 @@
           </nav>
         </div>
 
-        <div class="sidebar-profile"><span class="profile-avatar" id="sidebarProfileInitials">EA</span><span><strong id="sidebarProfileName">Everyday Agent</strong><small id="sidebarProfileEmail">local workspace</small></span><button type="button" aria-label="Apri profilo">•••</button></div>
+        <div class="sidebar-profile"><span class="profile-avatar" id="sidebarProfileInitials">HA</span><span><strong id="sidebarProfileName">Hermes AI</strong><small id="sidebarProfileEmail">local workspace</small></span><button type="button" aria-label="Apri profilo">•••</button></div>
         <div class="agent-presence">
           <span class="presence-orb"><span></span></span>
           <div><strong data-i18n="agent_active">Agente attivo</strong><small data-i18n="agent_ready">Spazio locale pronto</small></div>
@@ -68,12 +68,12 @@
 
       <main class="main-content">
         <header class="topbar">
-          <div class="mobile-brand"><button class="mobile-menu-button" id="mobileMenuButton" type="button" aria-label="Apri menu">☰</button><span class="brand-mark"><span></span><span></span><span></span></span><span class="brand-name">Everyday <strong>Agent</strong><small class="product-version">v0.9 · local</small></span></div>
+          <div class="mobile-brand"><button class="mobile-menu-button" id="mobileMenuButton" type="button" aria-label="Apri menu">☰</button><span class="brand-mark"><span></span><span></span><span></span></span><span class="brand-name">Hermes <strong>AI</strong><small class="product-version">v0.9 · local</small></span></div>
           <div class="topbar-context"><span class="context-dot"></span><span id="topbarDate">Il tuo spazio</span><span class="context-divider"></span><span id="backendTopbarStatus">Locale</span></div><label class="ops-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Cerca attività, decisioni, profili…" aria-label="Cerca attività, decisioni, profili" /></label>
           <div class="topbar-actions">
             <button class="icon-button" id="searchButton" type="button" aria-label="Cerca" title="Cerca">⌕</button>
             <button class="icon-button notification-button" id="notificationButton" type="button" aria-label="Notifiche" title="Notifiche"><span class="notification-icon">♢</span><span class="notification-dot"></span></button>
-            <button class="avatar-button" id="profileButton" type="button" aria-label="Profilo" title="Profilo"><span id="profileInitials">EA</span></button>
+            <button class="avatar-button" id="profileButton" type="button" aria-label="Profilo" title="Profilo"><span id="profileInitials">HA</span></button>
           </div>
         </header>
 
@@ -135,7 +135,7 @@
                   <button class="outline-button full-width" id="previewDigestButton" type="button">Anteprima digest</button>
                 </div>
                 <div class="assistant-card glass-panel" id="assistantCard">
-                  <div class="assistant-card-heading"><span class="assistant-mark">✦</span><div><span class="card-kicker">EVERYDAY AI</span><strong>Dimmi cosa vuoi delegare</strong></div><span class="assistant-live"><i></i>attivo</span></div>
+                  <div class="assistant-card-heading"><span class="assistant-mark">✦</span><div><span class="card-kicker">HERMES AI</span><strong>Dimmi cosa vuoi delegare</strong></div><span class="assistant-live"><i></i>attivo</span></div>
                   <div class="assistant-messages" id="assistantMessages"><div class="assistant-message agent-message">Posso occuparmi delle piccole cose. Per le decisioni vere, ti chiederò prima.</div></div>
                   <form class="assistant-form" id="assistantForm"><input id="assistantInput" autocomplete="off" placeholder="Es. ricordami il filtro acqua" aria-label="Scrivi all’agente" /><button type="submit" aria-label="Invia richiesta" title="Invia richiesta">→</button></form>
                 </div>
@@ -238,7 +238,7 @@
       </main>
     </div>
 
-    <div class="modal-backdrop onboarding-backdrop" id="onboardingBackdrop" aria-hidden="true"><div class="onboarding-card glass-panel"><span class="onboarding-mark">✦</span><p class="eyebrow" data-i18n="onboarding_welcome">Benvenuto in Everyday Agent</p><h2 data-i18n="onboarding_name_title">Come vuoi che ti chiami?</h2><p>Inserisci il tuo nome per personalizzare l’agente. Nei primi 14 giorni calibrerò la fiducia delle singole combinazioni e potresti ricevere qualche notifica in più.</p><div class="onboarding-policy"><strong>Cosa non farò mai</strong><ul id="onboardingNeverDoList"><li>Non parlerò con il tuo medico senza autorizzazione.</li><li>Non modificherò testamenti o documenti legali.</li><li>Non invierò denaro o firmerò contratti senza conferma.</li><li>Non condividerò dati sensibili senza consenso.</li></ul></div><form id="onboardingForm"><label class="form-row onboarding-lang"><span data-i18n="language_select">Scegli la lingua</span><select id="onboardingLanguageSelect" class="setting-select"><option value="it" data-i18n="lang_it">Italiano</option><option value="en" data-i18n="lang_en">English</option></select></label><input id="userNameInput" type="text" autocomplete="name" required maxlength="60" placeholder="Il tuo nome" aria-label="Il tuo nome" /><label class="form-check onboarding-consent"><input id="onboardingPoliciesAcknowledged" type="checkbox" required /> <span data-i18n="onboarding_consent">Ho letto e accetto questi confini operativi.</span></label><button class="primary-button full-width" type="submit" data-i18n="start_calibration">Inizia la calibrazione</button></form></div></div>
+    <div class="modal-backdrop onboarding-backdrop" id="onboardingBackdrop" aria-hidden="true"><div class="onboarding-card glass-panel"><span class="onboarding-mark">✦</span><p class="eyebrow" data-i18n="onboarding_welcome">Benvenuto in Hermes AI</p><h2 data-i18n="onboarding_name_title">Come vuoi che ti chiami?</h2><p>Inserisci il tuo nome per personalizzare l’agente. Nei primi 14 giorni calibrerò la fiducia delle singole combinazioni e potresti ricevere qualche notifica in più.</p><div class="onboarding-policy"><strong>Cosa non farò mai</strong><ul id="onboardingNeverDoList"><li>Non parlerò con il tuo medico senza autorizzazione.</li><li>Non modificherò testamenti o documenti legali.</li><li>Non invierò denaro o firmerò contratti senza conferma.</li><li>Non condividerò dati sensibili senza consenso.</li></ul></div><form id="onboardingForm"><label class="form-row onboarding-lang"><span data-i18n="language_select">Scegli la lingua</span><select id="onboardingLanguageSelect" class="setting-select"><option value="it" data-i18n="lang_it">Italiano</option><option value="en" data-i18n="lang_en">English</option></select></label><input id="userNameInput" type="text" autocomplete="name" required maxlength="60" placeholder="Il tuo nome" aria-label="Il tuo nome" /><label class="form-check onboarding-consent"><input id="onboardingPoliciesAcknowledged" type="checkbox" required /> <span data-i18n="onboarding_consent">Ho letto e accetto questi confini operativi.</span></label><button class="primary-button full-width" type="submit" data-i18n="start_calibration">Inizia la calibrazione</button></form></div></div>
     <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true"><div class="modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="modalClose" type="button" aria-label="Chiudi">×</button><span class="modal-icon">✦</span><h2 id="modalTitle">Aggiungi attività</h2><p id="modalCopy">Dimmi cosa vuoi tenere sotto controllo.</p><form id="taskForm"><label>Attività<input id="taskTitle" required placeholder="Es. rinnovare l'assicurazione" /></label><label>Dominio<select id="taskCategory"><option value="general">Generale</option><option value="home">Casa</option><option value="money">Denaro</option><option value="contract">Contratti</option><option value="health">Salute</option><option value="errands">Commissioni</option><option value="family">Famiglia</option></select></label><label>Importo opzionale<input id="taskAmount" type="number" min="0" step="0.01" placeholder="Es. 35" /></label><label>Controparte o fornitore<input id="taskCounterparty" type="text" maxlength="80" placeholder="Es. Idraulica Rossi" /></label><label>Contesto opzionale<input id="taskContext" type="text" maxlength="80" placeholder="Es. manutenzione casa" /></label><label class="form-check"><input id="taskPreapproved" type="checkbox" /> <span>Ho già autorizzato questa combinazione in modo permanente</span></label><label class="form-check"><input id="taskIrreversible" type="checkbox" /> <span>L'azione è irreversibile o non reversibile</span></label><label class="form-check"><input id="taskUrgent" type="checkbox" /> <span>Ha una scadenza urgente</span></label><button class="primary-button full-width" type="submit">Affida all'agente</button></form></div></div>
     <div class="modal-backdrop" id="digestBackdrop" aria-hidden="true"><div class="modal digest-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="digestTitle"><button class="modal-close" id="digestClose" type="button" aria-label="Chiudi">×</button><span class="modal-icon">◷</span><h2 id="digestTitle">Anteprima digest</h2><p>Il riepilogo raccoglie le attività senza interromperti.</p><div class="digest-preview-content" id="digestPreviewContent"></div><button class="outline-button full-width" id="digestCloseButton" type="button">Chiudi anteprima</button></div></div>
     <div class="modal-backdrop" id="legalBackdrop" aria-hidden="true"><div class="modal legal-modal glass-panel" role="dialog" aria-modal="true" aria-labelledby="legalModalTitle"><button class="modal-close" id="legalClose" type="button" aria-label="Chiudi">×</button><span class="modal-icon">◈</span><span class="card-kicker">INFORMAZIONI LEGALI</span><h2 id="legalModalTitle">Limiti, diritti e responsabilità</h2><div class="legal-modal-copy"><p><strong>Stato:</strong> demo locale non destinata alla produzione. Le informazioni non costituiscono consulenza legale, medica, finanziaria o fiscale.</p><p><strong>Dati:</strong> nella demo lo stato è salvato nel browser. Prima del lancio servono informativa privacy, basi giuridiche documentate, registro dei trattamenti, accordi con responsabili, misure di sicurezza e procedure per accesso, rettifica, portabilità, cancellazione e reclami.</p><p><strong>Azioni:</strong> pagamenti, trasferimenti, firme, cancellazioni, invii e condivisioni sensibili restano bloccati o richiedono conferma. I connettori reali devono essere approvati, limitati per scope, auditati e verificati per il paese di utilizzo.</p><p><strong>Non promettiamo:</strong> accuratezza assoluta, disponibilità continua, esito di una decisione, assenza di danni o conformità automatica a ogni normativa. La responsabilità, i contratti e i flussi di reclamo devono essere definiti prima del deployment.</p></div><button class="outline-button full-width" id="legalCloseButton" type="button">Chiudi</button></div></div>

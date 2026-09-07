@@ -51,7 +51,7 @@ const translations = {
     digest_will_include: "Il tuo digest includerà",
     elements: "elementi",
     preview_digest: "Anteprima digest",
-    ai_title: "EVERYDAY AI",
+    ai_title: "HERMES AI",
     ai_subtitle: "Dimmi cosa vuoi delegare",
     ai_active: "attivo",
     ai_placeholder: "Es. ricordami il filtro acqua",
@@ -363,7 +363,7 @@ const translations = {
     demo_cost: "costo demo",
     event_driven: "event-driven",
     architecture_footnote: "Pattern matching locale e modelli piccoli per le attività ricorrenti; ragionamento solo quando serve.",
-    onboarding_welcome: "Benvenuto in Everyday Agent",
+    onboarding_welcome: "Benvenuto in Hermes AI",
     onboarding_name_title: "Come vuoi che ti chiami?",
     onboarding_name_desc: "Inserisci il tuo nome per personalizzare l'agente. Nei primi 14 giorni calibrerò la fiducia delle singole combinazioni e potresti ricevere qualche notifica in più.",
     onboarding_never_title: "Cosa non farò mai",
@@ -425,7 +425,7 @@ const translations = {
     digest_will_include: "Your digest will include",
     elements: "elements",
     preview_digest: "Preview digest",
-    ai_title: "EVERYDAY AI",
+    ai_title: "HERMES AI",
     ai_subtitle: "Tell me what you want to delegate",
     ai_active: "active",
     ai_placeholder: "e.g. remind me about the water filter",
@@ -737,7 +737,7 @@ const translations = {
     demo_cost: "demo cost",
     event_driven: "event-driven",
     architecture_footnote: "Local pattern matching and small models for recurring activities; reasoning only when needed.",
-    onboarding_welcome: "Welcome to Everyday Agent",
+    onboarding_welcome: "Welcome to Hermes AI",
     onboarding_name_title: "What would you like to be called?",
     onboarding_name_desc: "Enter your name to personalize the agent. For the first 14 days I'll calibrate trust for each combination and you might get some extra notifications.",
     onboarding_never_title: "What I will never do",
@@ -1230,7 +1230,7 @@ function getUserName() {
 
 function initialsFor(name) {
   const parts = name.split(/\s+/).filter(Boolean);
-  return (parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : parts[0]?.slice(0, 2) || "EA").toUpperCase();
+  return (parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : parts[0]?.slice(0, 2) || "HA").toUpperCase();
 }
 
 function updatePersonalization() {

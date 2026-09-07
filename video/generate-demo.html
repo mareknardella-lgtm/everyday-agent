@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hermes AI — Hackathon demo generator</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #05070d; color: #eef6ff; font: 16px "Segoe UI", Arial, sans-serif; }
+    body { display: grid; place-items: center; padding: 24px; }
+    main { width: min(100%, 1100px); }
+    .shell { padding: 18px; border: 1px solid rgba(133,186,255,.2); border-radius: 22px; background: rgba(16,35,62,.78); box-shadow: 0 24px 80px rgba(0,0,0,.4); backdrop-filter: blur(18px); }
+    canvas { display: block; width: 100%; height: auto; border-radius: 14px; background: #05070d; box-shadow: 0 10px 40px rgba(0,0,0,.34); }
+    .controls { display: flex; align-items: center; gap: 16px; padding: 18px 4px 0; }
+    button { border: 0; border-radius: 10px; padding: 11px 16px; color: #041016; background: #51e4dc; font-weight: 800; cursor: pointer; }
+    button:disabled { cursor: wait; opacity: .65; }
+    #status { color: #a9bed8; }
+    .note { margin: 14px 4px 0; color: #7890ad; font-size: 13px; line-height: 1.5; }
+    .done { color: #51e4dc !important; }
+    .error { color: #ff7187 !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="shell">
+      <canvas id="stage" width="1280" height="720" aria-label="Hermes AI video preview"></canvas>
+      <div class="controls">
+        <button id="record" type="button">Generate 3-minute demo</button>
+        <span id="status">Loading demo frames…</span>
+      </div>
+      <p class="note">This generator creates a silent, text-led English hackathon video from the project’s synthetic screenshots. It does not claim that simulated integrations are live.</p>
+    </section>
+  </main>
+<script>
+(() => {
+  "use strict";
+
+  const W = 1280;
+  const H = 720;
+  const FPS = 30;    const TOTAL_SECONDS = totalDuration();
+  const OUTPUT_NAME = "hermes-ai-hackathon-demo.webm";
+  const canvas = document.getElementById("stage");
+  const ctx = canvas.getContext("2d");
+  const status = document.getElementById("status");
+  const recordButton = document.getElementById("record");
+  const images = new Map();
+
+  // The durations add up to exactly three minutes.
+  const scenes = [
+    {
+      duration: 8,
+      image: "01-landing.png",
+      kicker: "HERMES AI  /  HACKATHON DEMO",
+      title: ["Automation", "that earns trust."],
+      body: "A personal operating system for people and families.",
+      accent: "#51e4dc",
+      metric: "TRUST-FIRST"
+    },
+    {
+      duration: 14,
+      image: "04-dashboard.png",
+      kicker: "01  /  THE PROBLEM",
+      title: ["Assistants either", "interrupt too much."],
+      body: "Or they automate too much. Fixed thresholds ignore context, history and the cost of a wrong decision.",
+      bullets: ["More notifications do not mean more help.", "One generic threshold cannot represent human trust.", "Privacy and control cannot be afterthoughts."],
+      accent: "#ffb45c"
+    },
+    {
+      duration: 12,
+      image: "07-home.png",
+      kicker: "02  /  WHO IT IS FOR",
+      title: ["Built for", "real life."],
+      body: "Hermes AI brings home, money, health, errands, family and support into one calm control surface.",
+      bullets: ["Less mental load for individuals.", "Shared context with separate permissions.", "Useful silence, not another notification stream."],
+      accent: "#65b9ff"
+    },
+    {
+      duration: 14,
+      image: "05-decisions.png",
+      kicker: "03  /  THE DIFFERENCE",
+      title: ["Trust is not", "one setting."],
+      body: "Every decision gets a profile for one exact combination of action, counterparty and context.",
+      bullets: ["New combinations start cautious: 20/100.", "History changes autonomy — not the safety rules.", "The same user can trust one provider and question another."],
+      accent: "#51e4dc",
+      metric: "ACTION  +  COUNTERPARTY  +  CONTEXT"
+    },
+    {
+      duration: 14,
+      image: "05-decisions.png",
+      kicker: "04  /  SCENARIO",
+      title: ["A new provider", "starts at 20/100."],
+      body: "A €30 request can still require a person when the counterparty is unknown. Amount alone is not the decision.",
+      bullets: ["The agent pauses instead of guessing.", "The request shows its context and default outcome.", "The user keeps the final say."],
+      accent: "#ff7187",
+      metric: "20 / 100   ·   ASK FIRST"
+    },
+    {
+      duration: 14,
+      image: "14-governance.png",
+      kicker: "05  /  LEARNING",
+      title: ["The interaction", "changes the profile."],
+      body: "Fast approval raises trust. A long hesitation raises it less. Rejection drops it sharply.",
+      bullets: ["Fast approval: up to +12.", "Slow approval: a smaller update.", "Rejection: -30 for this exact profile only."],
+      accent: "#9d8cff",
+      metric: "+12   /   +1…+6   /   −30"
+    },
+    {
+      duration: 14,
+      image: "08-money.png",
+      kicker: "06  /  SAFETY PRECEDENCE",
+      title: ["Safety always", "wins."],
+      body: "Trust is a behavioral signal, never authorization by itself.",
+      bullets: ["Money, health and legal actions keep hard caps.", "Suspicious activity is always escalated.", "Irreversible actions require explicit confirmation."],
+      accent: "#ff7187",
+      metric: "TRUST ≠ PERMISSION"
+    },
+    {
+      duration: 12,
+      image: "14-governance.png",
+      kicker: "07  /  EXPLAINABILITY",
+      title: ["Ask ‘why?’", "Get an answer."],
+      body: "Every decision can expose the rule, score, context, cap and default outcome behind it.",
+      bullets: ["Traceable local audit history.", "No black-box automation in the demo.", "The explanation is part of the product, not a footnote."],
+      accent: "#51e4dc",
+      metric: "RULE  ·  SCORE  ·  CONTEXT"
+    },
+    {
+      duration: 12,
+      image: "15-settings.png",
+      kicker: "08  /  RECOVERY",
+      title: ["Recover without", "starting over."],
+      body: "Undo, redo, correction and crisis handling keep autonomy reversible where it can be.",
+      bullets: ["Corrections update the affected trust profile.", "Manual mode is always available.", "Offboarding hands open work back to humans."],
+      accent: "#65b9ff",
+      metric: "UNDO  ·  REDO  ·  HANDOVER"
+    },
+    {
+      duration: 12,
+      image: "11-family.png",
+      kicker: "09  /  HOUSEHOLDS",
+      title: ["Different people.", "Different permissions."],
+      body: "A family is not one account with one level of authority.",
+      bullets: ["Partners can approve selected domains.", "Teen access stays constrained.", "Routing never replaces authorization."],
+      accent: "#9d8cff",
+      metric: "ROLE  ≠  ROUTING"
+    },
+    {
+      duration: 12,
+      image: "13-support.png",
+      kicker: "10  /  PRIVACY",
+      title: ["The optional RAG", "runs locally."],
+      body: "TinyLlama, FAISS and sentence-transformers answer from local project documents without requiring a cloud API.",
+      bullets: ["316 knowledge chunks indexed for the prototype.", "Documents stay in the local environment.", "External providers are not contacted."],
+      accent: "#51e4dc",
+      metric: "LOCAL  /  316 CHUNKS  /  NO API KEY"
+    },
+    {
+      duration: 12,
+      image: "14-governance.png",
+      kicker: "11  /  PROOF BEFORE LAUNCH",
+      title: ["Stress-test the", "whole lifecycle."],
+      body: "A deterministic simulation exercises the policy before real credentials or side effects are introduced.",
+      bullets: ["Delayed replies and changed minds.", "Prompt injection, fraud and hard-cap probes.", "Contradictions become fixes before launch."],
+      accent: "#ffb45c",
+      metric: "6–24 MONTHS  ·  SEEDED  ·  REPRODUCIBLE"
+    },
+    {
+      duration: 12,
+      image: "03-legal.png",
+      kicker: "12  /  HONEST BOUNDARY",
+      title: ["Proof, not", "promises."],
+      body: "This submission does not make payments, send emails or access health systems.",
+      bullets: ["Banking, health and booking connectors are intentionally simulated.", "The demo shows the control system and the safety boundary.", "Production still needs independent legal, privacy and security review."],
+      accent: "#ffb45c",
+      metric: "EXTERNAL ACTIONS  /  DISABLED"
+    },
+    {
+      duration: 12,
+      image: "12-memory.png",
+      kicker: "13  /  THE THESIS",
+      title: ["Most assistants", "optimize for action."],
+      body: "Hermes AI optimizes for appropriate action: act when it should, explain when it acts, and stop when it must.",
+      bullets: ["Personal memory instead of generic thresholds.", "Safety precedence instead of blind autonomy.", "Less interruption without surrendering control."],
+      accent: "#65b9ff",
+      metric: "APPROPRIATE  >  AUTOMATIC"
+    },
+    {
+      duration: 6,
+      image: "01-landing.png",
+      kicker: "HERMES AI",
+      title: ["Trust the", "right thing."],
+      body: "Learns what this person trusts. Knows when to stop.",
+      accent: "#51e4dc",
+      metric: "HERMES-AI  /  OPEN SOURCE  /  MIT"
+    }
+  ];
+
+  const autoRecord = new URLSearchParams(location.search).get("record") === "1";
+  let starts = [];
+  let recording = false;
+  let rafId = 0;
+  let startedAt = 0;
+
+  function totalDuration() {
+    return scenes.reduce((sum, scene) => sum + scene.duration, 0);
+  }
+
+  function roundedRect(x, y, w, h, r) {
+    const radius = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.arcTo(x + w, y, x + w, y + h, radius);
+    ctx.arcTo(x + w, y + h, x, y + h, radius);
+    ctx.arcTo(x, y + h, x, y, radius);
+    ctx.arcTo(x, y, x + w, y, radius);
+    ctx.closePath();
+  }
+
+  function wrapText(text, maxWidth, font) {
+    ctx.font = font;
+    const words = text.split(/\s+/);
+    const lines = [];
+    let line = "";
+    for (const word of words) {
+      const candidate = line ? `${line} ${word}` : word;
+      if (ctx.measureText(candidate).width > maxWidth && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = candidate;
+      }
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function drawImageCover(image, x, y, w, h, alpha = 1) {
+    if (!image) return;
+    const sourceRatio = image.naturalWidth / image.naturalHeight;
+    const targetRatio = w / h;
+    let sx = 0, sy = 0, sw = image.naturalWidth, sh = image.naturalHeight;
+    if (sourceRatio > targetRatio) {
+      sw = image.naturalHeight * targetRatio;
+      sx = (image.naturalWidth - sw) / 2;
+    } else {
+      sh = image.naturalWidth / targetRatio;
+      sy = (image.naturalHeight - sh) / 2;
+    }
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    roundedRect(x, y, w, h, 18);
+    ctx.clip();
+    ctx.drawImage(image, sx, sy, sw, sh, x, y, w, h);
+    ctx.restore();
+  }
+
+  function drawScene(time) {
+    const safeTime = Math.max(0, Math.min(TOTAL_SECONDS - 0.001, time));
+    let cursor = 0;
+    let sceneIndex = 0;
+    for (let i = 0; i < scenes.length; i += 1) {
+      if (safeTime < cursor + scenes[i].duration) { sceneIndex = i; break; }
+      cursor += scenes[i].duration;
+    }
+    const scene = scenes[sceneIndex];
+    const local = safeTime - cursor;
+    const inFade = Math.min(1, local / 0.65);
+    const outFade = Math.min(1, (scene.duration - local) / 0.65);
+    const alpha = Math.max(0, Math.min(inFade, outFade));
+    const eased = 1 - Math.pow(1 - Math.min(1, local / scene.duration), 3);
+    const image = images.get(scene.image);
+
+    const gradient = ctx.createLinearGradient(0, 0, W, H);
+    gradient.addColorStop(0, "#07111f");
+    gradient.addColorStop(0.55, "#05070d");
+    gradient.addColorStop(1, "#091a2d");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.globalAlpha = alpha;
+    const glow = ctx.createRadialGradient(1030, 40, 10, 1030, 40, 520);
+    glow.addColorStop(0, `${scene.accent}35`);
+    glow.addColorStop(1, `${scene.accent}00`);
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+
+    // The screenshot is intentionally secondary to the message: no visual clutter wall.
+    drawImageCover(image, 716, 104 + (1 - eased) * 14, 484, 500, 0.82 * alpha);
+    ctx.fillStyle = "rgba(5,7,13,.48)";
+    roundedRect(716, 104 + (1 - eased) * 14, 484, 500, 18);
+    ctx.fill();
+    ctx.strokeStyle = `${scene.accent}55`;
+    ctx.lineWidth = 1;
+    roundedRect(716, 104 + (1 - eased) * 14, 484, 500, 18);
+    ctx.stroke();
+
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#a9bed8";
+    ctx.font = "700 15px 'Segoe UI', Arial, sans-serif";
+    ctx.letterSpacing = "1px";
+    ctx.fillText(scene.kicker, 70, 74);
+    ctx.letterSpacing = "0px";
+    ctx.fillStyle = scene.accent;
+    ctx.fillRect(70, 96, 62, 4);
+
+    const titleY = scene.title.length > 1 ? 202 : 232;
+    ctx.fillStyle = "#eef6ff";
+    ctx.font = "800 62px 'Segoe UI', Arial, sans-serif";
+    scene.title.forEach((line, index) => ctx.fillText(line, 70, titleY + index * 70));
+
+    const bodyY = titleY + scene.title.length * 70 + 28;
+    ctx.fillStyle = "#c4d3e5";
+    const bodyFont = "400 23px 'Segoe UI', Arial, sans-serif";
+    const bodyLines = wrapText(scene.body, 560, bodyFont);
+    bodyLines.slice(0, 3).forEach((line, index) => {
+      ctx.font = bodyFont;
+      ctx.fillText(line, 70, bodyY + index * 32);
+    });
+
+    if (scene.bullets) {
+      let bulletY = bodyY + bodyLines.slice(0, 3).length * 32 + 34;
+      ctx.font = "600 17px 'Segoe UI', Arial, sans-serif";
+      scene.bullets.forEach((bullet) => {
+        ctx.fillStyle = scene.accent;
+        ctx.beginPath();
+        ctx.arc(79, bulletY - 6, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#a9bed8";
+        const lines = wrapText(bullet, 520, "600 17px 'Segoe UI', Arial, sans-serif");
+        lines.forEach((line, lineIndex) => {
+          ctx.fillText(line, 96, bulletY + lineIndex * 24);
+        });
+        bulletY += Math.max(34, lines.length * 24 + 10);
+      });
+    }
+
+    if (scene.metric) {
+      ctx.fillStyle = "rgba(8,20,36,.86)";
+      roundedRect(716, 544, 484, 60, 12);
+      ctx.fill();
+      ctx.strokeStyle = `${scene.accent}80`;
+      roundedRect(716, 544, 484, 60, 12);
+      ctx.stroke();
+      ctx.fillStyle = scene.accent;
+      ctx.font = "800 17px 'Segoe UI', Arial, sans-serif";
+      ctx.fillText(scene.metric, 740, 580);
+    }
+
+    const overallProgress = safeTime / TOTAL_SECONDS;
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "rgba(133,186,255,.18)";
+    ctx.fillRect(70, 666, 1140, 2);
+    ctx.fillStyle = scene.accent;
+    ctx.fillRect(70, 666, 1140 * overallProgress, 2);
+    ctx.fillStyle = "#7890ad";
+    ctx.font = "600 13px 'Segoe UI', Arial, sans-serif";
+    ctx.fillText(`HERMES AI  ·  ${String(sceneIndex + 1).padStart(2, "0")} / ${String(scenes.length).padStart(2, "0")}`, 70, 694);
+    ctx.fillText(`${Math.floor(safeTime / 60)}:${String(Math.floor(safeTime % 60)).padStart(2, "0")} / 3:00`, 1110, 694);
+    ctx.globalAlpha = 1;
+  }
+
+  function renderPreview() {
+    drawScene((performance.now() / 1000) % TOTAL_SECONDS);
+    requestAnimationFrame(renderPreview);
+  }
+
+  function setStatus(text, className = "") {
+    status.textContent = text;
+    status.className = className;
+  }
+
+  async function loadAssets() {
+    const names = [...new Set(scenes.map(scene => scene.image).filter(Boolean))];
+    await Promise.all(names.map(name => new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => { images.set(name, image); resolve(); };
+      image.onerror = () => reject(new Error(`Could not load ${name}`));
+      image.src = `../gallery/${name}`;
+    })));
+    starts = [];
+    let cursor = 0;
+    scenes.forEach(scene => { starts.push(cursor); cursor += scene.duration; });
+    drawScene(0);
+    setStatus(`${names.length} frames ready · 3:00 · ${FPS} fps`);
+  }
+
+  function downloadBlob(blob) {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = OUTPUT_NAME;
+    anchor.textContent = `Download ${OUTPUT_NAME}`;
+    anchor.style.display = "inline-block";
+    anchor.style.marginLeft = "12px";
+    anchor.style.color = "#51e4dc";
+    anchor.id = "download-link";
+    document.querySelector(".controls").appendChild(anchor);
+    anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+  }
+
+  async function startRecording() {
+    if (recording) return;
+    recording = true;
+    recordButton.disabled = true;
+    setStatus("Recording 0:00 / 3:00…");
+    const stream = canvas.captureStream(FPS);
+    const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp8") ? "video/webm;codecs=vp8" : "video/webm";
+    const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 2200000 });
+    const chunks = [];
+    recorder.ondataavailable = event => { if (event.data && event.data.size) chunks.push(event.data); };
+    const finished = new Promise((resolve, reject) => {
+      recorder.onstop = () => resolve(new Blob(chunks, { type: "video/webm" }));
+      recorder.onerror = event => reject(event.error || new Error("MediaRecorder failed"));
+    });
+    recorder.start(1000);
+    startedAt = performance.now();
+
+    const renderRecording = (now) => {
+      const elapsed = (now - startedAt) / 1000;
+      drawScene(elapsed);
+      setStatus(`Recording ${Math.min(180, Math.floor(elapsed / 60))}:${String(Math.min(59, Math.floor(elapsed % 60))).padStart(2, "0")} / 3:00…`);
+      if (elapsed >= TOTAL_SECONDS) {
+        drawScene(TOTAL_SECONDS - 0.001);
+        recorder.stop();
+        return;
+      }
+      rafId = requestAnimationFrame(renderRecording);
+    };
+    rafId = requestAnimationFrame(renderRecording);
+
+    try {
+      const blob = await finished;
+      const saveResponse = await fetch("/__save-video", {
+        method: "POST",
+        headers: { "Content-Type": "video/webm" },
+        body: blob
+      });
+      if (!saveResponse.ok) throw new Error(`Could not save video (HTTP ${saveResponse.status})`);
+      const saved = await saveResponse.json();
+      window.generationSavedBytes = saved.bytes;
+      downloadBlob(blob);
+      window.generationDone = true;
+      window.generationSize = blob.size;
+      setStatus(`Done · ${Math.round(blob.size / 1024 / 1024 * 10) / 10} MB · download started`, "done");
+    } catch (error) {
+      window.generationError = String(error);
+      setStatus(`Generation failed: ${error.message}`, "error");
+    } finally {
+      stream.getTracks().forEach(track => track.stop());
+      recording = false;
+      recordButton.disabled = false;
+      cancelAnimationFrame(rafId);
+    }
+  }
+
+  window.startRecording = startRecording;
+  window.generationDone = false;
+  recordButton.addEventListener("click", startRecording);
+  loadAssets().then(() => {
+    if (autoRecord) setTimeout(startRecording, 800);
+  }).catch(error => {
+    window.generationError = String(error);
+    setStatus(error.message, "error");
+  });
+  renderPreview();
+})();
+</script>
+</body>
+</html>

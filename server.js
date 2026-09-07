@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Everyday Agent — Unified Production Server
+ * Hermes AI — Unified Production Server
  * Serves both static files (landing, dashboard, demo) and AI API on a single port.
  * 
  * Run: node server.js
@@ -207,7 +207,7 @@ function generateResponse(message, sessionId, state) {
 
   switch (intent.type) {
     case "greeting":
-      response = { text: `Ciao ${userName}! Sono il tuo Everyday Agent. Gestisco casa, soldi, salute, commissioni e famiglia. Per le decisioni che contano, ti chiedo prima. Per il resto, imparo e agisco. Cosa posso fare per te?`, level: null, task: null };
+      response = { text: `Ciao ${userName}! Sono il tuo Hermes AI. Gestisco casa, soldi, salute, commissioni e famiglia. Per le decisioni che contano, ti chiedo prima. Per il resto, imparo e agisco. Cosa posso fare per te?`, level: null, task: null };
       break;
     case "capability_question":
       response = { text: `Cosa posso fare:\n\n🏠 Casa — Manutenzione, scorte, scadenze garanzia\n💰 Denaro — Budget, pagamenti ricorrenti, spese\n🏥 Salute — Promemoria farmacia, visite, ricette\n🛒 Commissioni — Liste della spesa, ordini, prenotazioni\n👨‍👩‍👧 Famiglia — Scadenze scuola, attività, calendario\n\nPer ogni azione calcolo un punteggio di fiducia dinamico. Più mi fidi, più agisco in silenzio. Prova a dirmi cosa vuoi delegare!`, level: null, task: null };
@@ -429,7 +429,7 @@ const server = createServer(async (req, res) => {
 
 // Listen on 0.0.0.0 for Railway (not 127.0.0.1)
 server.listen(port, "0.0.0.0", () => {
-  console.log(`\n  Everyday Agent — Production Server`);
+  console.log(`\n  Hermes AI — Production Server`);
   console.log(`  ────────────────────────────────`);
   console.log(`  http://localhost:${port}`);
   console.log(`  http://0.0.0.0:${port} (Railway)`);

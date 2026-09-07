@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Everyday Agent — AI Server
+ * Hermes AI — AI Server
  * 
  * Real AI backend powering the dashboard chatbot, task classifier,
  * smart calendar, and trust engine. No external API keys required.
@@ -367,7 +367,7 @@ function handleGreeting(sessionId, state) {
 
   if (isFirstVisit) {
     return {
-      text: `Ciao ${userName}! Sono il tuo Everyday Agent. Sono qui per gestire le piccole cose della tua vita quotidiana — casa, soldi, salute, commissioni e famiglia — senza romperti le scatole con notifiche inutili.\n\nPer le decisioni che contano davvero, ti chiederò prima. Per il resto, imparo dai tuoi gesti e agisco in silenzio.\n\nCosa posso fare per te oggi?`,
+      text: `Ciao ${userName}! Sono il tuo Hermes AI. Sono qui per gestire le piccole cose della tua vita quotidiana — casa, soldi, salute, commissioni e famiglia — senza romperti le scatole con notifiche inutili.\n\nPer le decisioni che contano davvero, ti chiederò prima. Per il resto, imparo dai tuoi gesti e agisco in silenzio.\n\nCosa posso fare per te oggi?`,
       level: null,
       task: null,
     };
@@ -428,7 +428,7 @@ function handleStatusQuery(state) {
   const trustProfiles = Object.keys(state?.trustProfiles || {}).length;
   const calibrationDays = state?.calibrationDaysRemaining || 0;
 
-  let text = `📊 **Stato del tuo Everyday Agent**\n\n`;
+  let text = `📊 **Stato del tuo Hermes AI**\n\n`;
   text += `• Task attivi: ${pending.length}\n`;
   text += `• Task completati: ${completed.length}\n`;
   text += `• Profili fiducia: ${trustProfiles}\n`;
@@ -637,7 +637,7 @@ function exportToICS(event) {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Everyday Agent//EN",
+    "PRODID:-//Hermes AI//EN",
     "BEGIN:VEVENT",
     `UID:${event.id}`,
     `DTSTART:${formatICSDate(start)}`,
@@ -852,7 +852,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`\n  🤖 Everyday Agent AI Server`);
+  console.log(`\n  🤖 Hermes AI Server`);
   console.log(`  ─────────────────────────`);
   console.log(`  http://127.0.0.1:${PORT}/api/`);
   console.log(`  LLM Backend: ${LLM_PYTHON_URL}`);

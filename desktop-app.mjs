@@ -19,7 +19,7 @@ const server = createServer((request, response) => {
   response.end("Not found");
 });
 server.listen(port, "127.0.0.1", () => {
-  console.log(`Everyday Agent desktop shell target: http://127.0.0.1:${port}/`);
+  console.log(`Hermes AI desktop shell target: http://127.0.0.1:${port}/`);
   console.log("Keep this process running in the background for local reminders.");
 });
 

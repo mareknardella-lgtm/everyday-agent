@@ -1,8 +1,8 @@
-# Everyday Agent — Testing Instructions
+# Hermes AI — Testing Instructions
 
 ## Overview
 
-Everyday Agent includes **automated tests** (Python) and **manual verification steps** (browser UI). All tests run locally with no external dependencies or API keys.
+Hermes AI includes **automated tests** (Python) and **manual verification steps** (browser UI). All tests run locally with no external dependencies or API keys.
 
 ---
 

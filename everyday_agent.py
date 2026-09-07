@@ -1,4 +1,4 @@
-"""Everyday Agent: motore locale e senza dipendenze per la gestione della busywork.
+"""Hermes AI: motore locale e senza dipendenze per la gestione della busywork.
 
 Il modulo non esegue pagamenti, invii o cancellazioni: produce azioni proposte,
 registra il contesto localmente e richiede conferma per le operazioni sensibili.
@@ -1886,7 +1886,7 @@ def load_task(path: Path) -> Task:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Everyday Agent")
+    parser = argparse.ArgumentParser(description="Hermes AI")
     parser.add_argument("task", type=Path, help="file JSON con il task da elaborare")
     parser.add_argument("--config", type=Path, default=Path("agent.config.json"))
     parser.add_argument("--memory", type=Path, default=Path(".everyday-memory.json"))
