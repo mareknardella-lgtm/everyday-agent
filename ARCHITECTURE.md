@@ -1,6 +1,6 @@
 # Hermes AI Architecture
 
-This document describes the architecture of the local pre-launch prototype. It is deliberately explicit about what is implemented, what is simulated, and where real-world side effects are blocked.
+This document describes the architecture of the local pre-launch prototype. It is deliberately explicit about what is implemented, what is simulated, and where real-world side effects are blocked. The companion visual is **architecture diagram v3**: a 2200×1450 SVG organized by trust boundaries, execution status and data flow.
 
 ## System boundary
 
@@ -131,6 +131,19 @@ flowchart TB
   REPORT -. synthetic evidence only .-> POLICY
   REPORT -. synthetic trust interactions .-> PROFILE
 ```
+
+## Visual architecture diagram v3
+
+The standalone SVG is designed for both technical review and hackathon presentation. It separates six boundaries so a reviewer can follow the system without inferring hidden capabilities:
+
+1. **Human and input layer** — users, family roles, commands and untrusted content.
+2. **Client boundary** — PWA shell, onboarding/calibration, offline state, command adapter and the two Strands controls.
+3. **Orchestration and trust decision** — the mandatory deterministic preflight, exact trust lookup, policy gate, provider readiness and guarded Strands tools.
+4. **Control, authorization and data** — safety precedence, family permission matrix, execution gateway, memory, audit and optional local API.
+5. **Pre-launch multi-agent lab** — synthetic user, operating agent, support agent, adversary agent, seeded runner and report artifacts.
+6. **Delivery modes and future integrations** — public demo, local backend, real provider setup and connectors that remain disabled.
+
+The legend is intentional: blue means an active local flow, green means a safety or authorization gate, violet means optional Strands/simulation evidence, and amber means blocked or future-only. The diagram also repeats `externalAction = false` at the side-effect boundary so the prototype’s limitation is visible rather than implied.
 
 ## Component map
 

@@ -1,330 +1,417 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
-  <title id="title">Hermes AI detailed architecture</title>
-  <desc id="desc">Architecture of the local Hermes AI prototype: browser PWA, dynamic trust engine, policy gate, persistence, optional local API, simulation lab, and blocked external side effects.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1450" viewBox="0 0 2200 1450" role="img" aria-labelledby="title desc">
+  <title id="title">Hermes AI — Detailed system architecture v3</title>
+  <desc id="desc">Detailed architecture map of Hermes AI showing the human and untrusted input layer, browser PWA, mandatory deterministic preflight, Dynamic Trust Engine, optional real Strands Agent providers, guarded tools, family authorization, persistence, pre-launch simulation and the blocked external side-effect boundary.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#070b14"/>
-      <stop offset="1" stop-color="#111d35"/>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050810"/>
+      <stop offset="0.52" stop-color="#091326"/>
+      <stop offset="1" stop-color="#101d38"/>
     </linearGradient>
-    <linearGradient id="client" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#10213b"/>
-      <stop offset="1" stop-color="#0b1629"/>
+    <linearGradient id="clientPanel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#102847"/>
+      <stop offset="1" stop-color="#0b172d"/>
     </linearGradient>
-    <linearGradient id="decision" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#102b3b"/>
-      <stop offset="1" stop-color="#0b1727"/>
+    <linearGradient id="orchestrationPanel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b3040"/>
+      <stop offset="1" stop-color="#0b182d"/>
     </linearGradient>
-    <linearGradient id="storage" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#17243b"/>
-      <stop offset="1" stop-color="#101827"/>
+    <linearGradient id="controlPanel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#152a3b"/>
+      <stop offset="1" stop-color="#111a2c"/>
     </linearGradient>
-    <linearGradient id="lab" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#24203a"/>
-      <stop offset="1" stop-color="#151728"/>
+    <linearGradient id="labPanel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#241e3e"/>
+      <stop offset="1" stop-color="#14162a"/>
     </linearGradient>
+    <linearGradient id="blockedPanel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#30231e"/>
+      <stop offset="1" stop-color="#1e1920"/>
+    </linearGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#5c79a5" stroke-opacity=".075" stroke-width="1"/>
+    </pattern>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity=".3"/>
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity=".34"/>
     </filter>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto">
-      <path d="M0,0 L8,4 L0,8 Z" fill="#7d91ad"/>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+      <path d="M0,0 L10,5.5 L0,11 Z" fill="#7990b3"/>
     </marker>
-    <marker id="arrowCyan" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto">
-      <path d="M0,0 L8,4 L0,8 Z" fill="#5aa9ff"/>
+    <marker id="arrowBlue" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+      <path d="M0,0 L10,5.5 L0,11 Z" fill="#55b8ff"/>
     </marker>
-    <marker id="arrowAmber" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto">
-      <path d="M0,0 L8,4 L0,8 Z" fill="#e8b45e"/>
+    <marker id="arrowGreen" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+      <path d="M0,0 L10,5.5 L0,11 Z" fill="#63d59a"/>
+    </marker>
+    <marker id="arrowAmber" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+      <path d="M0,0 L10,5.5 L0,11 Z" fill="#efbb66"/>
+    </marker>
+    <marker id="arrowViolet" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+      <path d="M0,0 L10,5.5 L0,11 Z" fill="#b391ef"/>
     </marker>
     <style>
-      .title { font: 700 28px Arial, sans-serif; fill: #f4f7ff; letter-spacing: 0; }
-      .subtitle { font: 400 14px Arial, sans-serif; fill: #a8b7cd; letter-spacing: 0; }
-      .boundary { font: 700 15px Arial, sans-serif; fill: #f4f7ff; letter-spacing: 0; }
-      .section { font: 700 12px Arial, sans-serif; fill: #7ed0ff; letter-spacing: 0; }
-      .nodeTitle { font: 700 13px Arial, sans-serif; fill: #f4f7ff; letter-spacing: 0; }
-      .nodeText { font: 400 11px Arial, sans-serif; fill: #b5c3d6; letter-spacing: 0; }
-      .small { font: 400 10px Arial, sans-serif; fill: #8fa2bc; letter-spacing: 0; }
-      .badge { font: 700 10px Arial, sans-serif; fill: #06101d; letter-spacing: 0; }
-      .legend { font: 400 11px Arial, sans-serif; fill: #b5c3d6; letter-spacing: 0; }
+      .title { font: 700 34px Arial, sans-serif; fill: #f4f8ff; }
+      .subtitle { font: 400 16px Arial, sans-serif; fill: #aebdd2; }
+      .panelTitle { font: 700 16px Arial, sans-serif; fill: #f3f7ff; letter-spacing: .35px; }
+      .panelSub { font: 400 11px Arial, sans-serif; fill: #8ea5c2; }
+      .sectionLabel { font: 700 10px Arial, sans-serif; fill: #78d2ff; letter-spacing: 1.4px; }
+      .sectionLabelGreen { font: 700 10px Arial, sans-serif; fill: #70e0a5; letter-spacing: 1.4px; }
+      .sectionLabelAmber { font: 700 10px Arial, sans-serif; fill: #f1c474; letter-spacing: 1.4px; }
+      .sectionLabelViolet { font: 700 10px Arial, sans-serif; fill: #c1a5ff; letter-spacing: 1.4px; }
+      .boxTitle { font: 700 13px Arial, sans-serif; fill: #f2f7ff; }
+      .body { font: 400 11px Arial, sans-serif; fill: #b8c7da; }
+      .bodyMuted { font: 400 10px Arial, sans-serif; fill: #8da2bd; }
+      .bodyBright { font: 600 11px Arial, sans-serif; fill: #d7e6f7; }
+      .mono { font: 400 10px Consolas, monospace; fill: #a9c9e7; }
+      .tiny { font: 400 9px Arial, sans-serif; fill: #8297b2; }
+      .chipText { font: 700 10px Arial, sans-serif; fill: #07101c; letter-spacing: .3px; }
+      .legend { font: 400 11px Arial, sans-serif; fill: #b5c4d8; }
+      .boundary { fill: none; stroke-width: 1.2; rx: 14; filter: url(#shadow); }
       .box { stroke-width: 1; rx: 8; filter: url(#shadow); }
-      .line { stroke: #7d91ad; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
-      .lineCyan { stroke: #5aa9ff; stroke-width: 1.8; fill: none; marker-end: url(#arrowCyan); }
-      .lineAmber { stroke: #e8b45e; stroke-width: 1.5; stroke-dasharray: 6 5; fill: none; marker-end: url(#arrowAmber); }
-      .divider { stroke: #35465f; stroke-width: 1; }
+      .flow { fill: none; stroke: #748bad; stroke-width: 1.6; marker-end: url(#arrow); }
+      .flowBlue { fill: none; stroke: #55b8ff; stroke-width: 1.9; marker-end: url(#arrowBlue); }
+      .flowGreen { fill: none; stroke: #63d59a; stroke-width: 1.8; marker-end: url(#arrowGreen); }
+      .flowAmber { fill: none; stroke: #efbb66; stroke-width: 1.7; stroke-dasharray: 7 6; marker-end: url(#arrowAmber); }
+      .flowViolet { fill: none; stroke: #b391ef; stroke-width: 1.7; stroke-dasharray: 4 5; marker-end: url(#arrowViolet); }
+      .divider { stroke: #38506e; stroke-width: 1; }
+      .number { font: 700 10px Arial, sans-serif; fill: #06101c; }
     </style>
   </defs>
 
-  <rect width="1600" height="1100" fill="url(#bg)"/>
-  <text x="50" y="48" class="title">Hermes AI / Detailed Architecture</text>
-  <text x="50" y="74" class="subtitle">Local pre-launch prototype · trust-first decisioning · external side effects disabled</text>
-  <rect x="1240" y="30" width="310" height="40" rx="20" fill="#15283b" stroke="#315578"/>
-  <circle cx="1265" cy="50" r="7" fill="#5aa9ff"/>
-  <text x="1282" y="54" class="nodeText">Implemented locally / simulated safely</text>
+  <rect width="2200" height="1450" fill="url(#background)"/>
+  <rect x="24" y="24" width="2152" height="1402" rx="20" fill="url(#grid)"/>
 
-  <!-- Human layer -->
-  <rect x="50" y="105" width="1500" height="76" rx="12" fill="#0b1322" stroke="#35465f"/>
-  <text x="70" y="130" class="boundary">HUMAN LAYER</text>
-  <rect x="70" y="142" width="170" height="26" rx="6" fill="#20334e" stroke="#4c6b91"/>
-  <text x="155" y="159" text-anchor="middle" class="nodeText">Owner / primary user</text>
-  <rect x="260" y="142" width="320" height="26" rx="6" fill="#20334e" stroke="#4c6b91"/>
-  <text x="420" y="159" text-anchor="middle" class="nodeText">Family: owner · partner · teen · trusted person</text>
-  <text x="720" y="159" class="small">Human approval is separate from model confidence.</text>
+  <!-- Header -->
+  <text x="55" y="62" class="title">Hermes AI / System Architecture v3</text>
+  <text x="55" y="91" class="subtitle">Trust-first orchestration · deterministic authorization boundary · local-by-default prototype · no external side effects</text>
+  <rect x="1570" y="43" width="220" height="34" rx="17" fill="#183551" stroke="#3c78a8"/>
+  <circle cx="1593" cy="60" r="6" fill="#55b8ff" filter="url(#softGlow)"/>
+  <text x="1608" y="64" class="bodyBright">IMPLEMENTED LOCALLY</text>
+  <rect x="1810" y="43" width="320" height="34" rx="17" fill="#332a21" stroke="#886b42"/>
+  <circle cx="1833" cy="60" r="6" fill="#efbb66"/>
+  <text x="1848" y="64" class="bodyBright">EFFECTS DISABLED IN DEMO</text>
+
+  <!-- Human and ingress layer -->
+  <rect x="50" y="125" width="2100" height="105" rx="14" fill="#0b1425" stroke="#3b5577" class="boundary"/>
+  <text x="72" y="151" class="panelTitle">01 / HUMAN + INPUT LAYER</text>
+  <text x="72" y="170" class="panelSub">The user decides; external content is evidence only and never grants consent or permissions.</text>
+
+  <rect x="72" y="184" width="250" height="30" rx="7" fill="#1a3554" stroke="#4b78a6"/>
+  <text x="197" y="203" text-anchor="middle" class="bodyBright">Owner / primary user</text>
+  <rect x="340" y="184" width="355" height="30" rx="7" fill="#1a3554" stroke="#4b78a6"/>
+  <text x="517" y="203" text-anchor="middle" class="bodyBright">Family roles: owner · partner · teen · trusted person</text>
+  <rect x="713" y="184" width="360" height="30" rx="7" fill="#222d4e" stroke="#66599d"/>
+  <text x="893" y="203" text-anchor="middle" class="bodyBright">Untrusted inputs: email · documents · calendar · alerts</text>
+  <rect x="1091" y="184" width="420" height="30" rx="7" fill="#1a3554" stroke="#4b78a6"/>
+  <text x="1301" y="203" text-anchor="middle" class="bodyBright">Commands: task · approve · reject · explain · undo</text>
+  <rect x="1529" y="184" width="599" height="30" rx="7" fill="#18283f" stroke="#527394"/>
+  <text x="1828" y="203" text-anchor="middle" class="bodyBright">Human approval is independent from model confidence and Dynamic Trust</text>
 
   <!-- Client boundary -->
-  <rect x="50" y="205" width="440" height="565" rx="14" fill="url(#client)" stroke="#47709e"/>
-  <text x="72" y="234" class="boundary">CLIENT BOUNDARY / BROWSER + PWA</text>
-  <text x="72" y="255" class="small">HTML, CSS and JavaScript · can run without backend</text>
+  <rect x="50" y="270" width="430" height="650" rx="14" fill="url(#clientPanel)" stroke="#4d88ba" class="boundary"/>
+  <text x="74" y="301" class="panelTitle">02 / CLIENT BOUNDARY</text>
+  <text x="74" y="321" class="panelSub">Browser PWA · works without the optional backend</text>
 
-  <rect x="72" y="276" width="190" height="78" class="box" fill="#173354" stroke="#5aa9ff"/>
-  <text x="88" y="300" class="nodeTitle">Dashboard shell</text>
-  <text x="88" y="319" class="nodeText">app/index.html</text>
-  <text x="88" y="336" class="nodeText">Control Feed · domains · governance</text>
+  <rect x="74" y="345" width="185" height="88" class="box" fill="#17365a" stroke="#5bbcff"/>
+  <text x="90" y="370" class="boxTitle">PWA shell</text>
+  <text x="90" y="389" class="body">root index.html → app/</text>
+  <text x="90" y="407" class="body">dark ops dashboard</text>
+  <text x="90" y="424" class="tiny">HTML · CSS · accessible controls</text>
 
-  <rect x="278" y="276" width="190" height="78" class="box" fill="#173354" stroke="#5aa9ff"/>
-  <text x="294" y="300" class="nodeTitle">Application controller</text>
-  <text x="294" y="319" class="nodeText">app/app.js</text>
-  <text x="294" y="336" class="nodeText">navigation · tasks · language · UI state</text>
+  <rect x="275" y="345" width="181" height="88" class="box" fill="#17365a" stroke="#5bbcff"/>
+  <text x="291" y="370" class="boxTitle">App controller</text>
+  <text x="291" y="389" class="body">app/app.js</text>
+  <text x="291" y="407" class="body">views · language · events</text>
+  <text x="291" y="424" class="tiny">rendering + command routing</text>
 
-  <rect x="72" y="374" width="190" height="78" class="box" fill="#173354" stroke="#5aa9ff"/>
-  <text x="88" y="398" class="nodeTitle">Onboarding + calibration</text>
-  <text x="88" y="417" class="nodeText">language · name · boundaries</text>
-  <text x="88" y="434" class="nodeText">14-day high-observation period</text>
+  <rect x="74" y="455" width="185" height="92" class="box" fill="#16304e" stroke="#5bbcff"/>
+  <text x="90" y="480" class="boxTitle">Onboarding + calibration</text>
+  <text x="90" y="499" class="body">language · name · boundaries</text>
+  <text x="90" y="517" class="body">14-day high-observation mode</text>
+  <text x="90" y="536" class="tiny">expectations shown explicitly</text>
 
-  <rect x="278" y="374" width="190" height="78" class="box" fill="#173354" stroke="#5aa9ff"/>
-  <text x="294" y="398" class="nodeTitle">Operational views</text>
-  <text x="294" y="417" class="nodeText">calendar · memory · support</text>
-  <text x="294" y="434" class="nodeText">settings · integrations · simulation lab</text>
+  <rect x="275" y="455" width="181" height="92" class="box" fill="#16304e" stroke="#5bbcff"/>
+  <text x="291" y="480" class="boxTitle">Operational views</text>
+  <text x="291" y="499" class="body">Control Feed · Calendar</text>
+  <text x="291" y="517" class="body">Governance · Support</text>
+  <text x="291" y="536" class="tiny">domains · settings · lab</text>
 
-  <rect x="72" y="472" width="190" height="78" class="box" fill="#142b40" stroke="#4e9eae"/>
-  <text x="88" y="496" class="nodeTitle">Local state adapter</text>
-  <text x="88" y="515" class="nodeText">localStorage / state-v2</text>
-  <text x="88" y="532" class="nodeText">preferences · tasks · UI persistence</text>
+  <rect x="74" y="569" width="382" height="92" class="box" fill="#143348" stroke="#56a9bf"/>
+  <text x="90" y="594" class="boxTitle">Local state + offline shell</text>
+  <text x="90" y="614" class="body">localStorage state-v2 · preferences · tasks · UI state</text>
+  <text x="90" y="633" class="body">app/sw.js cache-first shell · manifest.webmanifest</text>
+  <text x="90" y="650" class="tiny">Offline UI is not offline execution: no connector is available.</text>
 
-  <rect x="278" y="472" width="190" height="78" class="box" fill="#142b40" stroke="#4e9eae"/>
-  <text x="294" y="496" class="nodeTitle">Offline shell</text>
-  <text x="294" y="515" class="nodeText">manifest.webmanifest</text>
-  <text x="294" y="532" class="nodeText">sw.js cache-first assets</text>
+  <rect x="74" y="683" width="382" height="92" class="box" fill="#162d49" stroke="#6f91b7"/>
+  <text x="90" y="708" class="boxTitle">Command adapter</text>
+  <text x="90" y="728" class="body">create · approve · reject · defer · explain · recovery</text>
+  <text x="90" y="747" class="body">Strands trace card: preflight · provider status · tool lifecycle</text>
+  <text x="90" y="765" class="tiny">No browser button bypasses the policy gate.</text>
 
-  <rect x="72" y="570" width="396" height="72" class="box" fill="#1c2c43" stroke="#5aa9ff"/>
-  <text x="88" y="594" class="nodeTitle">User command surface</text>
-  <text x="88" y="613" class="nodeText">create task · approve · reject · defer · explain · undo / redo concept</text>
-  <text x="88" y="630" class="small">UI actions are inputs to policy; they are not external execution by themselves.</text>
+  <rect x="74" y="797" width="382" height="92" class="box" fill="#182942" stroke="#637f9e"/>
+  <text x="90" y="822" class="boxTitle">Optional backend client</text>
+  <text x="90" y="842" class="mono">POST /api/strands/plan</text>
+  <text x="90" y="860" class="mono">POST /api/strands/invoke</text>
+  <text x="90" y="878" class="tiny">Authenticated mode adds server-side authorization.</text>
 
-  <rect x="72" y="662" width="396" height="78" class="box" fill="#1b2639" stroke="#6a7d9c"/>
-  <text x="88" y="686" class="nodeTitle">Preview server</text>
-  <text x="88" y="705" class="nodeText">preview-server.mjs · dependency-free Node server</text>
-  <text x="88" y="722" class="nodeText">static routes + /simulation-report.json</text>
+  <!-- Orchestration boundary -->
+  <rect x="510" y="270" width="770" height="650" rx="14" fill="url(#orchestrationPanel)" stroke="#3f9db4" class="boundary"/>
+  <text x="534" y="301" class="panelTitle">03 / ORCHESTRATION + TRUST DECISION</text>
+  <text x="534" y="321" class="panelSub">The deterministic Hermes preflight is authoritative; Strands is a guarded reasoning/orchestration layer.</text>
 
-  <!-- Decision boundary -->
-  <rect x="520" y="205" width="600" height="565" rx="14" fill="url(#decision)" stroke="#3f879b"/>
-  <text x="542" y="234" class="boundary">DECISION BOUNDARY / LOCAL POLICY CORE</text>
-  <text x="542" y="255" class="small">everyday_agent.py · trust is a signal, never a permission · real Strands boundary when provider is ready</text>
+  <rect x="534" y="345" width="722" height="180" rx="10" fill="#0e2636" stroke="#4ec1dc"/>
+  <text x="554" y="370" class="sectionLabel">AUTHORITATIVE PATH / ALWAYS FIRST</text>
+  <text x="1083" y="370" class="tiny">Every provider and every model starts here</text>
 
-  <rect x="542" y="276" width="170" height="76" class="box" fill="#164152" stroke="#55bdd2"/>
-  <text x="558" y="300" class="nodeTitle">Task intake</text>
-  <text x="558" y="319" class="nodeText">Task normalization</text>
-  <text x="558" y="336" class="nodeText">action · domain · amount · context</text>
+  <rect x="554" y="389" width="205" height="96" class="box" fill="#16455a" stroke="#55c8e4"/>
+  <circle cx="574" cy="410" r="12" fill="#55b8ff"/><text x="574" y="414" text-anchor="middle" class="number">1</text>
+  <text x="594" y="414" class="boxTitle">Normalize request</text>
+  <text x="570" y="437" class="body">action · category · amount</text>
+  <text x="570" y="455" class="body">counterparty · context</text>
+  <text x="570" y="473" class="body">reversible · suspicious</text>
 
-  <rect x="730" y="276" width="170" height="76" class="box" fill="#164152" stroke="#55bdd2"/>
-  <text x="746" y="300" class="nodeTitle">Dynamic Trust Engine</text>
-  <text x="746" y="319" class="nodeText">score 0-100 per exact tuple</text>
-  <text x="746" y="336" class="nodeText">action | counterparty | context</text>
+  <rect x="783" y="389" width="205" height="96" class="box" fill="#16455a" stroke="#55c8e4"/>
+  <circle cx="803" cy="410" r="12" fill="#55b8ff"/><text x="803" y="414" text-anchor="middle" class="number">2</text>
+  <text x="823" y="414" class="boxTitle">Exact trust lookup</text>
+  <text x="799" y="437" class="mono">action|counterparty|context</text>
+  <text x="799" y="455" class="body">0–100 score · baseline 20</text>
+  <text x="799" y="473" class="body">decay · source · hard cap</text>
 
-  <rect x="918" y="276" width="180" height="76" class="box" fill="#164152" stroke="#55bdd2"/>
-  <text x="934" y="300" class="nodeTitle">Profile resolver</text>
-  <text x="934" y="319" class="nodeText">baseline 20 · decay</text>
-  <text x="934" y="336" class="nodeText">cautious imported trust</text>
+  <rect x="1012" y="389" width="225" height="96" class="box" fill="#16455a" stroke="#55c8e4"/>
+  <circle cx="1032" cy="410" r="12" fill="#55b8ff"/><text x="1032" y="414" text-anchor="middle" class="number">3</text>
+  <text x="1052" y="414" class="boxTitle">Authoritative policy gate</text>
+  <text x="1028" y="437" class="body">safety · consent · role</text>
+  <text x="1028" y="455" class="body">manual mode · urgency</text>
+  <text x="1028" y="473" class="body">decision + human control</text>
 
-  <rect x="542" y="374" width="258" height="92" class="box" fill="#194438" stroke="#58bd87"/>
-  <text x="558" y="398" class="nodeTitle">Safety precedence</text>
-  <text x="558" y="417" class="nodeText">fraud · takeover · irreversible actions</text>
-  <text x="558" y="434" class="nodeText">money · health · legal · minors</text>
-  <text x="558" y="451" class="nodeText">hard caps · consent expiry · manual mode</text>
+  <rect x="783" y="498" width="205" height="24" rx="12" fill="#174633" stroke="#57c990"/>
+  <text x="885" y="515" text-anchor="middle" class="chipText">POLICY RESULT IS NOT MODEL-OVERRIDABLE</text>
 
-  <rect x="818" y="374" width="280" height="92" class="box" fill="#194438" stroke="#58bd87"/>
-  <text x="834" y="398" class="nodeTitle">Family authorization gate</text>
-  <text x="834" y="417" class="nodeText">owner · partner · teen · trusted person</text>
-  <text x="834" y="434" class="nodeText">domain matrix: read / approve / manage</text>
-  <text x="834" y="451" class="nodeText">server-side check in optional API</text>
+  <rect x="534" y="545" width="722" height="232" rx="10" fill="#0b1f35" stroke="#6785bb"/>
+  <text x="554" y="570" class="sectionLabelViolet">REAL STRANDS PATH / ONLY WHEN READY</text>
+  <text x="1068" y="570" class="tiny">provider-aware · optional dependency · no external tools</text>
 
-  <rect x="542" y="488" width="170" height="92" class="box" fill="#263b54" stroke="#6f9bc2"/>
-  <text x="558" y="512" class="nodeTitle">Decision output</text>
-  <text x="558" y="531" class="nodeText">prepared locally</text>
-  <text x="558" y="548" class="nodeText">digest / report</text>
-  <text x="558" y="565" class="nodeText">confirmation required</text>
+  <rect x="554" y="589" width="205" height="143" class="box" fill="#20264a" stroke="#a586df"/>
+  <text x="570" y="613" class="boxTitle">Provider readiness</text>
+  <text x="570" y="635" class="body">SDK installed?</text>
+  <text x="570" y="653" class="body">provider configured?</text>
+  <text x="570" y="671" class="body">privacy opt-in?</text>
+  <rect x="570" y="686" width="73" height="22" rx="11" fill="#244d3e"/><text x="606" y="701" text-anchor="middle" class="chipText">ready</text>
+  <rect x="650" y="686" width="93" height="22" rx="11" fill="#4b3329"/><text x="696" y="701" text-anchor="middle" class="chipText">unavailable</text>
 
-  <rect x="730" y="488" width="170" height="92" class="box" fill="#263b54" stroke="#6f9bc2"/>
-  <text x="746" y="512" class="nodeTitle">Explainability</text>
-  <text x="746" y="531" class="nodeText">reason · trust score</text>
-  <text x="746" y="548" class="nodeText">rule · context · cap</text>
-  <text x="746" y="565" class="nodeText">default outcome if ignored</text>
+  <rect x="783" y="589" width="205" height="143" class="box" fill="#20264a" stroke="#a586df"/>
+  <text x="799" y="613" class="boxTitle">Strands Agent</text>
+  <text x="799" y="635" class="body">from strands import Agent</text>
+  <text x="799" y="653" class="body">system prompt enforces order</text>
+  <text x="799" y="671" class="body">model response is advisory</text>
+  <text x="799" y="699" class="tiny">real invocation only after preflight</text>
 
-  <rect x="918" y="488" width="180" height="92" class="box" fill="#263b54" stroke="#6f9bc2"/>
-  <text x="934" y="512" class="nodeTitle">Recovery protocol</text>
-  <text x="934" y="531" class="nodeText">undo / redo guidance</text>
-  <text x="934" y="548" class="nodeText">error lowers affected trust</text>
-  <text x="934" y="565" class="nodeText">crisis review + escalation</text>
+  <rect x="1012" y="589" width="225" height="143" class="box" fill="#20264a" stroke="#a586df"/>
+  <text x="1028" y="613" class="boxTitle">Guarded tool plane</text>
+  <text x="1028" y="635" class="mono">normalize_request</text>
+  <text x="1028" y="653" class="mono">lookup_trust · apply_policy</text>
+  <text x="1028" y="671" class="mono">explain_decision</text>
+  <text x="1028" y="689" class="mono">prepare_local_action</text>
+  <text x="1028" y="714" class="tiny">read-only or local draft; never a connector</text>
 
-  <rect x="542" y="604" width="556" height="116" class="box" fill="#1f3044" stroke="#5aa9ff"/>
-  <text x="558" y="628" class="nodeTitle">Interaction learning loop</text>
-  <text x="558" y="648" class="nodeText">fast approval +12 · slow approval +1 to +6 · rejection -30 · execution error -40</text>
-  <text x="558" y="668" class="nodeText">profile-specific decay toward baseline · imported trust is discounted and never Level 1</text>
-  <text x="558" y="688" class="nodeText">audit event + KPI update + only the relevant trust profile changes</text>
-  <rect x="958" y="646" width="116" height="26" rx="13" fill="#5aa9ff"/>
-  <text x="1016" y="663" text-anchor="middle" class="badge">LEARN</text>
+  <rect x="554" y="795" width="702" height="99" class="box" fill="#123548" stroke="#55b8ff"/>
+  <text x="570" y="820" class="boxTitle">Decision envelope + privacy-safe trace</text>
+  <text x="570" y="840" class="body">prepared locally · digest · confirmation required · blocked</text>
+  <text x="570" y="859" class="body">trace: tool names + lifecycle labels only; no prompt, arguments, documents or model text retained</text>
+  <rect x="1083" y="871" width="151" height="22" rx="11" fill="#4b3329" stroke="#efbb66"/><text x="1158" y="886" text-anchor="middle" class="chipText">externalAction: false</text>
 
-  <!-- Persistence -->
-  <rect x="50" y="805" width="580" height="245" rx="14" fill="url(#storage)" stroke="#556d93"/>
-  <text x="72" y="834" class="boundary">PERSISTENCE BOUNDARY</text>
-  <text x="72" y="855" class="small">Local by default · retention and export/deletion controls are explicit</text>
+  <!-- Control and data boundary -->
+  <rect x="1320" y="270" width="830" height="650" rx="14" fill="url(#controlPanel)" stroke="#52718d" class="boundary"/>
+  <text x="1344" y="301" class="panelTitle">04 / CONTROL, AUTHORIZATION + DATA</text>
+  <text x="1344" y="321" class="panelSub">Trust influences convenience; safety, consent and role authorization remain independent.</text>
 
-  <rect x="72" y="878" width="160" height="82" class="box" fill="#202e47" stroke="#7287a8"/>
-  <text x="88" y="902" class="nodeTitle">Memory JSON</text>
-  <text x="88" y="921" class="nodeText">preferences · patterns</text>
-  <text x="88" y="938" class="nodeText">consents · KPI · trust</text>
+  <rect x="1344" y="345" width="380" height="166" class="box" fill="#172e3b" stroke="#57c990"/>
+  <text x="1362" y="370" class="sectionLabelGreen">SAFETY PRECEDENCE</text>
+  <text x="1362" y="394" class="boxTitle">Hard stop rules</text>
+  <text x="1362" y="415" class="body">1. fraud / takeover / suspicious activity</text>
+  <text x="1362" y="433" class="body">2. irreversible actions and absolute caps</text>
+  <text x="1362" y="451" class="body">3. money · health · legal · minors</text>
+  <text x="1362" y="469" class="body">4. consent expiry and manual mode</text>
+  <text x="1362" y="491" class="tiny">These rules can force confirmation or block.</text>
 
-  <rect x="250" y="878" width="160" height="82" class="box" fill="#202e47" stroke="#7287a8"/>
-  <text x="266" y="902" class="nodeTitle">Hash-chain audit</text>
-  <text x="266" y="921" class="nodeText">sequence · prior hash</text>
-  <text x="266" y="938" class="nodeText">local integrity verification</text>
+  <rect x="1745" y="345" width="381" height="166" class="box" fill="#172e3b" stroke="#57c990"/>
+  <text x="1763" y="370" class="sectionLabelGreen">FAMILY AUTHORIZATION</text>
+  <text x="1763" y="394" class="boxTitle">Permission matrix</text>
+  <text x="1763" y="415" class="body">owner: all workspace controls</text>
+  <text x="1763" y="433" class="body">partner: domain-scoped grants</text>
+  <text x="1763" y="451" class="body">teen: no sensitive approval/manage</text>
+  <text x="1763" y="469" class="body">trusted person: emergency read-only</text>
+  <text x="1763" y="491" class="tiny">Server-side API check; never browser-only.</text>
 
-  <rect x="428" y="878" width="180" height="82" class="box" fill="#202e47" stroke="#7287a8"/>
-  <text x="444" y="902" class="nodeTitle">Recovery records</text>
-  <text x="444" y="921" class="nodeText">undo · errors · offboarding</text>
-  <text x="444" y="938" class="nodeText">handover of open deadlines</text>
+  <rect x="1344" y="533" width="782" height="130" class="box" fill="#2c2825" stroke="#efbb66"/>
+  <text x="1362" y="558" class="sectionLabelAmber">EXTERNAL SIDE-EFFECT GATE / BLOCKED IN SUBMISSION</text>
+  <text x="1362" y="584" class="boxTitle">Execution gateway</text>
+  <text x="1362" y="603" class="body">Receives a local request record only · no bank, vendor, email, calendar, health, booking or smart-home credentials.</text>
+  <text x="1362" y="622" class="body">Sensitive or irreversible work remains human-controlled even when trust is high.</text>
+  <rect x="1892" y="581" width="210" height="47" rx="9" fill="#51372a" stroke="#efbb66"/>
+  <text x="1997" y="601" text-anchor="middle" class="bodyBright">NO LIVE CONNECTOR</text>
+  <text x="1997" y="618" text-anchor="middle" class="mono">externalAction = false</text>
 
-  <text x="72" y="1002" class="small">Prototype note: local hash chaining is tamper-evident, not a qualified immutable/WORM audit system.</text>
+  <rect x="1344" y="685" width="782" height="209" rx="9" fill="#172438" stroke="#617894"/>
+  <text x="1362" y="710" class="sectionLabel">PERSISTENCE + OBSERVABILITY</text>
+  <rect x="1362" y="730" width="230" height="105" class="box" fill="#202f48" stroke="#7892b3"/>
+  <text x="1378" y="755" class="boxTitle">Memory / trust profiles</text>
+  <text x="1378" y="776" class="body">preferences · patterns · consent</text>
+  <text x="1378" y="794" class="body">score · outcomes · decay</text>
+  <text x="1378" y="812" class="tiny">local JSON or workspace memory</text>
 
-  <!-- API -->
-  <rect x="660" y="805" width="460" height="245" rx="14" fill="#1b2236" stroke="#776a9c"/>
-  <text x="682" y="834" class="boundary">OPTIONAL LOCAL API BOUNDARY</text>
-  <text x="682" y="855" class="small">api_server.py · stdlib HTTP · externalActions=false</text>
+  <rect x="1610" y="730" width="230" height="105" class="box" fill="#202f48" stroke="#7892b3"/>
+  <text x="1626" y="755" class="boxTitle">Audit chain</text>
+  <text x="1626" y="776" class="body">event · sequence · prior hash</text>
+  <text x="1626" y="794" class="body">explanation · KPI · recovery</text>
+  <text x="1626" y="812" class="tiny">tamper-evident prototype record</text>
 
-  <rect x="682" y="878" width="126" height="82" class="box" fill="#2b2945" stroke="#9a84ca"/>
-  <text x="698" y="902" class="nodeTitle">HTTP + Strands routes</text>
-  <text x="698" y="921" class="nodeText">auth · state · preflight</text>
-  <text x="698" y="938" class="nodeText">tasks · guarded invoke</text>
+  <rect x="1858" y="730" width="250" height="105" class="box" fill="#202f48" stroke="#7892b3"/>
+  <text x="1874" y="755" class="boxTitle">Optional local API</text>
+  <text x="1874" y="776" class="body">auth · scrypt · CSRF</text>
+  <text x="1874" y="794" class="body">SQLite · state versioning</text>
+  <text x="1874" y="812" class="tiny">workspace roles + task records</text>
 
-  <rect x="826" y="878" width="126" height="82" class="box" fill="#2b2945" stroke="#9a84ca"/>
-  <text x="842" y="902" class="nodeTitle">Session security</text>
-  <text x="842" y="921" class="nodeText">scrypt · CSRF</text>
-  <text x="842" y="938" class="nodeText">HttpOnly · SameSite</text>
+  <text x="1362" y="866" class="tiny">Retention, export, deletion and offboarding are explicit product controls; production encryption/managed audit still require implementation.</text>
 
-  <rect x="970" y="878" width="126" height="82" class="box" fill="#2b2945" stroke="#9a84ca"/>
-  <text x="986" y="902" class="nodeTitle">SQLite</text>
-  <text x="986" y="921" class="nodeText">workspace · roles</text>
-  <text x="986" y="938" class="nodeText">tasks · audit events</text>
+  <!-- Pre-launch lab -->
+  <rect x="50" y="970" width="1020" height="390" rx="14" fill="url(#labPanel)" stroke="#806bb1" class="boundary"/>
+  <text x="74" y="1001" class="panelTitle">05 / PRE-LAUNCH MULTI-AGENT LAB</text>
+  <text x="74" y="1021" class="panelSub">lifecycle_simulation.py · synthetic data · seeded 180–730 days · design evidence, not a safety certification</text>
 
-  <!-- Lab -->
-  <rect x="1150" y="205" width="400" height="565" rx="14" fill="url(#lab)" stroke="#806da9"/>
-  <text x="1172" y="234" class="boundary">PRE-LAUNCH LAB</text>
-  <text x="1172" y="255" class="small">lifecycle_simulation.py · synthetic and deterministic</text>
+  <rect x="74" y="1045" width="215" height="92" class="box" fill="#32294e" stroke="#a889df"/>
+  <text x="90" y="1070" class="boxTitle">ScenarioConfig</text>
+  <text x="90" y="1090" class="body">income · household · habits</text>
+  <text x="90" y="1108" class="body">trusted providers · seed</text>
+  <text x="90" y="1126" class="tiny">no real personal data</text>
 
-  <rect x="1172" y="276" width="166" height="72" class="box" fill="#322b4c" stroke="#a58bd3"/>
-  <text x="1188" y="300" class="nodeTitle">ScenarioConfig</text>
-  <text x="1188" y="319" class="nodeText">name · income · household</text>
-  <text x="1188" y="336" class="nodeText">habits · trusted provider</text>
+  <rect x="311" y="1045" width="215" height="92" class="box" fill="#32294e" stroke="#a889df"/>
+  <text x="327" y="1070" class="boxTitle">Synthetic user</text>
+  <text x="327" y="1090" class="body">late · distracted · imperfect</text>
+  <text x="327" y="1108" class="body">approves, rejects, changes mind</text>
+  <text x="327" y="1126" class="tiny">behavior creates realistic noise</text>
 
-  <rect x="1352" y="276" width="176" height="72" class="box" fill="#322b4c" stroke="#a58bd3"/>
-  <text x="1368" y="300" class="nodeTitle">Synthetic user</text>
-  <text x="1368" y="319" class="nodeText">late · distracted</text>
-  <text x="1368" y="336" class="nodeText">changes mind sometimes</text>
+  <rect x="548" y="1045" width="215" height="92" class="box" fill="#32294e" stroke="#a889df"/>
+  <text x="564" y="1070" class="boxTitle">Operating agent</text>
+  <text x="564" y="1090" class="body">same trust + policy precedence</text>
+  <text x="564" y="1108" class="body">notifications · confirmations</text>
+  <text x="564" y="1126" class="tiny">never bypasses hard stops</text>
 
-  <rect x="1172" y="370" width="166" height="72" class="box" fill="#322b4c" stroke="#a58bd3"/>
-  <text x="1188" y="394" class="nodeTitle">Operating agent</text>
-  <text x="1188" y="413" class="nodeText">trust + policy behavior</text>
-  <text x="1188" y="430" class="nodeText">same safety precedence</text>
+  <rect x="785" y="1045" width="261" height="92" class="box" fill="#32294e" stroke="#a889df"/>
+  <text x="801" y="1070" class="boxTitle">Support + adversary agents</text>
+  <text x="801" y="1090" class="body">support: explain / recover / escalate</text>
+  <text x="801" y="1108" class="body">adversary: injection / fraud / cap probes</text>
+  <text x="801" y="1126" class="tiny">attack scenarios remain synthetic</text>
 
-  <rect x="1352" y="370" width="176" height="72" class="box" fill="#322b4c" stroke="#a58bd3"/>
-  <text x="1368" y="394" class="nodeTitle">Support agent</text>
-  <text x="1368" y="413" class="nodeText">explain · recover</text>
-  <text x="1368" y="430" class="nodeText">escalate when needed</text>
+  <rect x="74" y="1165" width="310" height="104" class="box" fill="#2a2344" stroke="#a889df"/>
+  <text x="90" y="1190" class="boxTitle">Simulation runner</text>
+  <text x="90" y="1210" class="body">daily event loop · deterministic seed</text>
+  <text x="90" y="1228" class="body">contradictions · support cases</text>
+  <text x="90" y="1246" class="body">blocked actions · calibration noise</text>
 
-  <rect x="1172" y="464" width="166" height="72" class="box" fill="#49322d" stroke="#e8b45e"/>
-  <text x="1188" y="488" class="nodeTitle">Adversary agent</text>
-  <text x="1188" y="507" class="nodeText">prompt injection</text>
-  <text x="1188" y="524" class="nodeText">fraud · cap probes</text>
+  <rect x="406" y="1165" width="640" height="104" class="box" fill="#2a2344" stroke="#a889df"/>
+  <text x="422" y="1190" class="boxTitle">Report artifacts</text>
+  <text x="422" y="1210" class="body">daily log · notification volume · trust trajectories · avoided interruptions</text>
+  <text x="422" y="1228" class="body">contradictions found · rule corrections · attack outcomes · reproducible seed</text>
+  <text x="422" y="1246" class="tiny">Feeds design review only; it does not prove production reliability or legal compliance.</text>
 
-  <rect x="1352" y="464" width="176" height="72" class="box" fill="#322b4c" stroke="#a58bd3"/>
-  <text x="1368" y="488" class="nodeTitle">Simulation runner</text>
-  <text x="1368" y="507" class="nodeText">180-730 seeded days</text>
-  <text x="1368" y="524" class="nodeText">offline event loop</text>
+  <rect x="74" y="1294" width="972" height="39" rx="8" fill="#332d20" stroke="#8d7141"/>
+  <text x="560" y="1318" text-anchor="middle" class="bodyBright">SIMULATION INPUTS ARE ISOLATED FROM REAL USERS, PROVIDERS, CREDENTIALS AND THIRD-PARTY SYSTEMS</text>
 
-  <rect x="1172" y="558" width="356" height="104" class="box" fill="#322b4c" stroke="#a58bd3"/>
-  <text x="1188" y="582" class="nodeTitle">Report artifacts</text>
-  <text x="1188" y="601" class="nodeText">daily log · trust profiles · notifications avoided</text>
-  <text x="1188" y="618" class="nodeText">blocked actions · support cases · contradictions</text>
-  <text x="1188" y="635" class="nodeText">corrections · limitations · reproducible seed</text>
+  <!-- Deployment and future boundary -->
+  <rect x="1110" y="970" width="1040" height="390" rx="14" fill="url(#blockedPanel)" stroke="#986e4d" class="boundary"/>
+  <text x="1134" y="1001" class="panelTitle">06 / DELIVERY MODES + FUTURE INTEGRATIONS</text>
+  <text x="1134" y="1021" class="panelSub">Separate deployment paths make the prototype honest about what is live, local, optional or future-only.</text>
 
-  <rect x="1172" y="690" width="356" height="50" rx="8" fill="#473d29" stroke="#e8b45e"/>
-  <text x="1190" y="712" class="nodeText">Evidence for design review, not a production safety certification.</text>
-  <text x="1190" y="728" class="small">No real user, provider or external system is contacted.</text>
+  <rect x="1134" y="1045" width="300" height="112" class="box" fill="#263049" stroke="#6681a8"/>
+  <text x="1150" y="1070" class="boxTitle">Public demo / Railway</text>
+  <text x="1150" y="1090" class="body">Node server · static PWA + landing site</text>
+  <text x="1150" y="1108" class="body">dependency-free · /api/health</text>
+  <text x="1150" y="1126" class="tiny">no private model, AWS key or live connector</text>
+  <rect x="1150" y="1134" width="120" height="16" rx="8" fill="#4b3329"/><text x="1210" y="1146" text-anchor="middle" class="chipText">preflight only</text>
 
-  <!-- Effects -->
-  <rect x="1150" y="805" width="400" height="245" rx="14" fill="#241f1d" stroke="#a2764a"/>
-  <text x="1172" y="834" class="boundary">EXTERNAL SIDE-EFFECT BOUNDARY</text>
-  <text x="1172" y="855" class="small">Intentionally blocked in this submission</text>
+  <rect x="1452" y="1045" width="300" height="112" class="box" fill="#263049" stroke="#6681a8"/>
+  <text x="1468" y="1070" class="boxTitle">Local backend</text>
+  <text x="1468" y="1090" class="body">api_server.py · auth · SQLite</text>
+  <text x="1468" y="1108" class="body">server policy + Strands routes</text>
+  <text x="1468" y="1126" class="tiny">private workspace development path</text>
+  <rect x="1468" y="1134" width="122" height="16" rx="8" fill="#244d3e"/><text x="1529" y="1146" text-anchor="middle" class="chipText">provider-ready path</text>
 
-  <rect x="1172" y="878" width="166" height="82" class="box" fill="#4b342a" stroke="#e8b45e"/>
-  <text x="1188" y="902" class="nodeTitle">Execution gateway</text>
-  <text x="1188" y="921" class="nodeText">explicit request only</text>
-  <text x="1188" y="938" class="nodeText">no credentials / no calls</text>
+  <rect x="1770" y="1045" width="356" height="112" class="box" fill="#3b2c25" stroke="#efbb66"/>
+  <text x="1786" y="1070" class="boxTitle">Real provider setup</text>
+  <text x="1786" y="1090" class="body">Ollama: local host + tool-capable model</text>
+  <text x="1786" y="1108" class="body">Bedrock: explicit cloud opt-in + IAM</text>
+  <text x="1786" y="1126" class="tiny">secrets stay outside GitHub and browser state</text>
+  <rect x="1786" y="1134" width="154" height="16" rx="8" fill="#244d3e"/><text x="1863" y="1146" text-anchor="middle" class="chipText">real SDK invocation</text>
 
-  <rect x="1352" y="878" width="176" height="82" class="box" fill="#4b342a" stroke="#e8b45e"/>
-  <text x="1368" y="902" class="nodeTitle">Future connectors</text>
-  <text x="1368" y="921" class="nodeText">OAuth · bank · email</text>
-  <text x="1368" y="938" class="nodeText">health · booking · vendors</text>
+  <rect x="1134" y="1182" width="992" height="92" class="box" fill="#332721" stroke="#b07b4a"/>
+  <text x="1150" y="1207" class="sectionLabelAmber">FUTURE SCOPED CONNECTORS / NOT INCLUDED</text>
+  <text x="1150" y="1227" class="body">OAuth · Open Banking · email · calendar · health · pharmacy · booking · vendors · smart home</text>
+  <text x="1150" y="1246" class="body">Required before production: least privilege · idempotency · confirmation binding · monitoring · kill switch · incident response</text>
+  <text x="1150" y="1265" class="tiny">Any future connector must remain behind the same policy, consent, role and execution gateway.</text>
 
-  <text x="1172" y="1002" class="small">Future only: least privilege, idempotency, confirmation binding, monitoring and kill switch.</text>
+  <rect x="1134" y="1294" width="992" height="39" rx="8" fill="#51372a" stroke="#efbb66"/>
+  <text x="1630" y="1318" text-anchor="middle" class="bodyBright">BOUNDARY GUARANTEE IN THIS SUBMISSION: NO PAYMENT · NO EMAIL · NO BOOKING · NO HEALTH UPDATE · NO DELETION</text>
 
   <!-- Flow lines -->
-  <path d="M155,168 L155,276" class="line"/>
-  <path d="M420,168 L370,276" class="line"/>
-  <path d="M262,315 L278,315" class="lineCyan"/>
-  <path d="M170,354 L170,374" class="lineCyan"/>
-  <path d="M370,354 L370,374" class="lineCyan"/>
-  <path d="M170,452 L170,472" class="lineCyan"/>
-  <path d="M370,452 L370,472" class="lineCyan"/>
-  <path d="M270,606 L542,314" class="lineCyan"/>
-  <path d="M468,510 L520,510" class="lineCyan"/>
+  <!-- human to client -->
+  <path d="M197,214 L197,270" class="flowBlue"/>
+  <path d="M517,214 L390,270" class="flow"/>
+  <path d="M1301,214 L390,683" class="flowBlue"/>
+  <path d="M1828,214 L1190,345" class="flow"/>
 
-  <path d="M712,314 L730,314" class="lineCyan"/>
-  <path d="M900,314 L918,314" class="lineCyan"/>
-  <path d="M1008,352 L1008,374" class="line"/>
-  <path d="M730,352 L670,374" class="line"/>
-  <path d="M800,420 L818,420" class="line"/>
-  <path d="M670,466 L627,488" class="line"/>
-  <path d="M780,466 L815,488" class="line"/>
-  <path d="M958,466 L1008,488" class="line"/>
-  <path d="M627,580 L627,604" class="lineCyan"/>
-  <path d="M815,580 L815,604" class="lineCyan"/>
-  <path d="M1008,580 L1008,604" class="lineCyan"/>
-  <path d="M542,662 L410,878" class="line"/>
-  <path d="M800,662 L330,878" class="line"/>
-  <path d="M1008,662 L520,878" class="line"/>
-  <path d="M1098,534 L1172,919" class="lineAmber"/>
+  <!-- client internal -->
+  <path d="M259,389 L275,389" class="flowBlue"/>
+  <path d="M166,433 L166,455" class="flowBlue"/>
+  <path d="M365,433 L365,455" class="flowBlue"/>
+  <path d="M166,547 L166,569" class="flowBlue"/>
+  <path d="M365,547 L365,569" class="flowBlue"/>
+  <path d="M265,661 L265,683" class="flow"/>
+  <path d="M265,775 L265,797" class="flow"/>
+  <path d="M456,843 L510,843" class="flowBlue"/>
 
-  <path d="M1255,348 L1255,370" class="line"/>
-  <path d="M1440,348 L1440,370" class="line"/>
-  <path d="M1255,442 L1255,464" class="lineAmber"/>
-  <path d="M1440,442 L1440,464" class="line"/>
-  <path d="M1338,500 L1352,500" class="line"/>
-  <path d="M1440,536 L1440,558" class="line"/>
-  <path d="M1338,610 L1098,650" class="lineAmber"/>
+  <!-- client into mandatory path -->
+  <path d="M480,718 C495,718 496,437 534,437" class="flowBlue"/>
+  <circle cx="501" cy="610" r="12" fill="#55b8ff"/><text x="501" y="614" text-anchor="middle" class="number">1</text>
 
-  <!-- API internal and links -->
-  <path d="M808,919 L826,919" class="line"/>
-  <path d="M952,919 L970,919" class="line"/>
-  <path d="M890,878 L890,770" class="line"/>
-  <path d="M660,919 L490,700" class="line"/>
+  <!-- preflight sequence -->
+  <path d="M759,437 L783,437" class="flowBlue"/>
+  <path d="M988,437 L1012,437" class="flowBlue"/>
+  <path d="M1124,485 L1124,545" class="flowGreen"/>
+  <path d="M988,661 L1012,661" class="flowViolet"/>
+  <path d="M759,661 L783,661" class="flowViolet"/>
+  <path d="M885,732 L885,795" class="flowViolet"/>
+  <path d="M1124,732 L1124,795" class="flowViolet"/>
+  <path d="M1012,843 L980,843" class="flowBlue"/>
 
-  <!-- Legend -->
-  <rect x="50" y="1070" width="1500" height="24" fill="#090e19"/>
-  <line x1="70" y1="1082" x2="125" y2="1082" class="lineCyan"/>
-  <text x="138" y="1086" class="legend">active local flow</text>
-  <line x1="295" y1="1082" x2="350" y2="1082" class="lineAmber"/>
-  <text x="363" y="1086" class="legend">blocked / future-only flow</text>
-  <rect x="535" y="1075" width="14" height="14" rx="3" fill="#194438" stroke="#58bd87"/>
-  <text x="560" y="1086" class="legend">safety gate</text>
-  <rect x="675" y="1075" width="14" height="14" rx="3" fill="#49322d" stroke="#e8b45e"/>
-  <text x="700" y="1086" class="legend">external side effect disabled</text>
-  <text x="1110" y="1086" class="legend">Hermes AI · local prototype · 2026</text>
+  <!-- decision to control plane -->
+  <path d="M1237,437 C1290,437 1290,420 1344,420" class="flowGreen"/>
+  <path d="M1237,437 C1310,437 1320,420 1745,420" class="flowGreen"/>
+  <path d="M1237,843 C1290,843 1295,745 1344,745" class="flow"/>
+  <path d="M1237,843 C1320,843 1600,745 1610,745" class="flow"/>
+  <path d="M1237,843 C1350,843 1740,745 1858,745" class="flow"/>
+  <path d="M1724,428 L1745,428" class="flowGreen"/>
+  <path d="M1534,511 L1534,533" class="flowAmber"/>
+  <path d="M1935,511 L1935,533" class="flowAmber"/>
+  <path d="M1735,663 L1735,685" class="flowAmber"/>
+
+  <!-- control and lab relationships -->
+  <path d="M1534,894 L1010,1165" class="flowViolet"/>
+  <path d="M865,1045 L865,920" class="flowViolet"/>
+  <path d="M289,1091 L311,1091" class="flowViolet"/>
+  <path d="M526,1091 L548,1091" class="flowViolet"/>
+  <path d="M763,1091 L785,1091" class="flowViolet"/>
+  <path d="M1810,1157 L1810,1182" class="flowAmber"/>
+
+  <!-- Footer legend -->
+  <rect x="50" y="1383" width="2100" height="38" rx="10" fill="#070d19" stroke="#263b57"/>
+  <line x1="76" y1="1402" x2="132" y2="1402" class="flowBlue"/><text x="146" y="1406" class="legend">active local flow</text>
+  <line x1="314" y1="1402" x2="370" y2="1402" class="flowGreen"/><text x="384" y="1406" class="legend">safety / authorization gate</text>
+  <line x1="610" y1="1402" x2="666" y2="1402" class="flowViolet"/><text x="680" y="1406" class="legend">optional Strands / simulation evidence</text>
+  <line x1="1012" y1="1402" x2="1068" y2="1402" class="flowAmber"/><text x="1082" y="1406" class="legend">blocked or future-only flow</text>
+  <rect x="1395" y="1393" width="14" height="14" rx="3" fill="#3b2c25" stroke="#efbb66"/><text x="1422" y="1406" class="legend">no external side effect</text>
+  <text x="1938" y="1406" class="legend">Hermes AI · v3 · 2026</text>
 </svg>
