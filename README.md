@@ -157,7 +157,7 @@ The dashboard also exposes the simulator under **Governance → Pre-launch Lab**
 
 ## Architecture diagram
 
-The full architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md). It includes the client, policy core, Dynamic Trust Engine, persistence, optional local API, simulation lab and the blocked external side-effect boundary. A standalone SVG version is available at [architecture-diagram.svg](architecture-diagram.svg) for slides and the hackathon submission.
+The full architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md). It includes the client, policy core, Dynamic Trust Engine, persistence, optional local API, simulation lab and the blocked external side-effect boundary. Standalone SVG and PNG versions are available for slides and the hackathon submission: [architecture-diagram.svg](architecture-diagram.svg) · [architecture-diagram.png](architecture-diagram.png).
 
 ## Repository map
 

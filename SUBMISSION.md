@@ -87,7 +87,8 @@ Show `ARCHITECTURE.md`: the UI, local state, optional backend, Dynamic Trust Eng
 The repository includes both formats required for review:
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) with the detailed Mermaid diagram, component map, request lifecycle, security precedence, API path and simulation sequence.
-- [architecture-diagram.svg](architecture-diagram.svg), a standalone **2200x1450 architecture diagram v3** suitable for slides or an image upload.
+- [architecture-diagram.svg](architecture-diagram.svg), the editable standalone **2200x1450 architecture diagram v3**.
+- [architecture-diagram.png](architecture-diagram.png), the separate **2200x1450 PNG export** ready for a hackathon image upload or slide deck.
 
 The v3 diagram is organized into six explicit boundaries: human/input, client, orchestration/trust, control/authorization/data, pre-launch lab and delivery/future integrations. Its color legend distinguishes active local flow, safety gates, optional Strands/simulation evidence and blocked future-only flow. The diagram makes the prototype boundary explicit: browser and local policy flows are implemented, the pre-launch lab is synthetic, and external side effects remain blocked because no provider credentials or live connectors are included.
 
