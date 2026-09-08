@@ -39,10 +39,52 @@ Most assistants create another stream of notifications or use rigid thresholds s
 - Offline PWA assets, service-worker cache and compact Support shortcut
 - Governance panel with GDPR-oriented local export/deletion controls
 - Seasonal deadline radar, silent-cost concepts and offboarding handover package
-- Deterministic six-to-twenty-four-month pre-launch lifecycle simulation
+- Deterministic pre-launch lifecycle simulation
+- Real, provider-aware Strands Agents orchestration boundary with guarded tools and explicit unavailable states
+- Governance trace visible in the dashboard: normalize → exact trust → policy → human control → `externalAction=false`
 - Python test suite covering policy, security caps, trust learning and adversarial scenarios
 
-## What is simulated
+## Real Strands orchestration
+
+Hermes AI includes a real integration boundary for the [Strands Agents SDK](https://strandsagents.com/). The dashboard’s **Governance → Strands orchestration** card has two deliberately different controls:
+
+- **Esegui preflight** runs the deterministic Hermes policy locally or through the authenticated API. It does not invoke a model.
+- **Invoca agente Strands** calls `POST /api/strands/invoke`; this runs a real Strands `Agent` only when the SDK and a selected provider are ready. The response exposes the provider state, privacy-safe tool lifecycle and `externalAction: false`.
+
+The agent is not the authorization boundary. The deterministic `EverydayAgent` preflight runs first and cannot be loosened by model output. Strands receives five guarded tools—normalization, exact trust lookup, policy evaluation, explanation and local-draft preparation—and none can call a bank, vendor, email, calendar, health system, shell or smart-home service. This is why the demo can prove real orchestration without pretending that simulated integrations are live.
+
+### Run with a local Ollama model (no prompt leaves the machine)
+
+```powershell
+python -m venv .venv
+.venv\\Scripts\\Activate.ps1
+pip install -r requirements-strands.txt
+pip install "strands-agents[ollama]"
+ollama pull llama3.1
+ollama serve
+$env:HERMES_STRANDS_PROVIDER = "ollama"
+$env:HERMES_STRANDS_OLLAMA_MODEL = "llama3.1"
+python strands_orchestrator.py
+python strands_orchestrator.py --invoke "Prenota una riparazione con un idraulico nuovo per 30 euro"
+python api_server.py --serve-static
+```
+
+### Run with Amazon Bedrock (explicit cloud privacy opt-in)
+
+```powershell
+pip install -r requirements-strands.txt
+$env:HERMES_STRANDS_PROVIDER = "bedrock"
+$env:HERMES_STRANDS_ALLOW_CLOUD = "true"
+$env:AWS_DEFAULT_REGION = "us-west-2"
+# Configure AWS through your normal profile/role or AWS CLI; never paste keys into GitHub.
+aws configure
+python strands_orchestrator.py --invoke "Explain this repair request safely"
+```
+
+The Bedrock path requires the AWS permissions documented by Strands (`bedrock:InvokeModel` and, for streaming, `bedrock:InvokeModelWithResponseStream`). The Ollama path requires a running local model with tool-calling support. `GET /api/strands/status` exposes only non-secret readiness information: `ready`, `provider`, `state`, model id/host and a reason. If either dependency is unavailable, Hermes returns `sdk-unavailable` or `provider-unavailable`; it never labels that response as a live Strands invocation.
+
+The public Railway demo remains dependency-free and therefore shows the honest preflight state until a private/local backend is configured. This is intentional: AWS credentials, private model assets and sensitive RAG documents are not deployed publicly. The optional local API exposes the preflight as `POST /api/strands/plan` and the real model path as `POST /api/strands/invoke`, both after authentication.
+
 
 The demo intentionally does **not** claim to provide production integrations. Banking, real payments, email, external calendars, healthcare records, bookings, smart-home commands, provider negotiation, push delivery with a closed browser and human support escalation remain integration work. The UI may represent these capabilities locally, but no third party is contacted.
 
@@ -72,7 +114,7 @@ For the production-style unified server (the same entry point used by Railway):
 npm start
 ```
 
-The server respects Railway's `PORT` environment variable, listens on `0.0.0.0`, serves the dashboard and landing site, and exposes `/api/health` for deployment checks. The public Node server intentionally uses the lightweight local policy engine; the optional TinyLlama + FAISS RAG remains a separate local Python service.
+The server respects Railway's `PORT` environment variable, listens on `0.0.0.0`, serves the dashboard and landing site, and exposes `/api/health` for deployment checks. The public Node server intentionally uses the lightweight local policy engine; the optional TinyLlama + FAISS RAG and real Strands provider orchestration remain separate local components because they may require private model assets or AWS credentials.
 
 Useful routes:
 
@@ -87,7 +129,7 @@ You can also open `index.html` with VS Code Live Server. The root entry point fo
 
 The repository includes `server.js`, `package.json` and `railway.json` for a single-service Railway deployment. Railway should run `npm start` and check `/api/health`. No secrets or third-party credentials are required for this prototype.
 
-The hosted service is a demonstration of the local policy and trust engine. It does not perform payments, send emails, access healthcare records or contact vendors. TinyLlama + FAISS RAG is intentionally kept local because the model and indexed documents are not part of the web deployment.
+The hosted service is a demonstration of the local policy and trust engine. It does not perform payments, send emails, access healthcare records or contact vendors. TinyLlama + FAISS RAG and the optional Strands model path are intentionally kept local because private model assets, indexed documents and AWS credentials are not part of the web deployment.
 
 ## Run the optional local backend
 
@@ -123,6 +165,8 @@ The full architecture is documented in [ARCHITECTURE.md](ARCHITECTURE.md). It in
 app/                       Dashboard HTML, CSS, JavaScript and PWA assets
 site/                      Landing page, FAQ, legal disclosure and 404 page
 everyday_agent.py          Core policy and Dynamic Trust Engine
+strands_orchestrator.py    Real provider-aware Strands tools, preflight and safe unavailable states
+requirements-strands.txt   Strands Agents SDK and provider setup notes
 api_server.py              Optional local backend with auth and policy checks
 lifecycle_simulation.py    Deterministic multi-role pre-launch simulation
 preview-server.mjs         Dependency-free local web server and simulation route

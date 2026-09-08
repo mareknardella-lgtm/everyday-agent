@@ -890,6 +890,7 @@ const backend = {
   syncSuspended: false,
   status: "Backend locale non rilevato: la dashboard resta sul dispositivo."
 };
+let strandsLastResult = null;
 
 const AI_SERVER = window.EVERYDAY_AGENT_AI || "http://127.0.0.1:4180";
 let aiSessionId = localStorage.getItem("ea-ai-session") || crypto.randomUUID?.() || `ai-${Date.now()}`;
@@ -2788,6 +2789,207 @@ function resetLocalState() {
   showOnboarding();
 }
 
+function localStrandsStatus() {
+  return {
+    provider: null,
+    sdkInstalled: false,
+    ready: false,
+    state: "sdk-unavailable",
+    modelProvider: null,
+    modelCredentialsPresent: false,
+    toolCatalog: ["normalize_request", "lookup_trust", "apply_policy", "explain_decision", "prepare_local_action"],
+    externalActions: false,
+    reason: "Preflight locale disponibile. Il vero agente Strands richiede SDK e provider configurati."
+  };
+}
+
+function localStrandsPlan(request) {
+  const analysis = classifyRequest(request);
+  const task = {
+    title: analysis.title,
+    category: analysis.category,
+    action: analysis.actionType,
+    action_type: analysis.actionType,
+    amount_eur: analysis.amount,
+    reversible: !analysis.irreversible,
+    suspicious: analysis.suspicious,
+    context: analysis.trustContext,
+    counterparty: analysis.counterparty,
+    provider: analysis.counterparty === "unknown" ? null : analysis.counterparty
+  };
+  const levelName = analysis.level === 1 ? "EXECUTE_AND_REPORT" : analysis.level === 2 ? "DIGEST" : "ASK_FIRST";
+  const humanControl = analysis.level === 3 ? "required" : "not_required_for_local_demo";
+  return {
+    orchestrator: "hermes-strands-boundary",
+    version: 2,
+    mode: "deterministic-preflight",
+    externalAction: false,
+    task,
+    trust: {
+      score: analysis.trustScore,
+      effectiveScore: analysis.trustEffectiveScore,
+      key: analysis.trustKey,
+      source: analysis.trustSource,
+      cap: analysis.trustCap,
+      dynamicSpendLimitEur: analysis.dynamicSpendLimit
+    },
+    decision: {
+      level: analysis.level,
+      levelName,
+      reason: analysis.reason,
+      explanation: analysis.reason,
+      trustScore: analysis.trustScore,
+      trustKey: analysis.trustKey,
+      trustContext: analysis.trustContext,
+      trustCap: analysis.trustCap,
+      dynamicSpendLimitEur: analysis.dynamicSpendLimit,
+      trustSource: analysis.trustSource,
+      requiresHumanConfirmation: analysis.level === 3
+    },
+    trace: [
+      { step: "normalize_request", status: "completed" },
+      { step: "lookup_exact_trust", status: "completed", key: analysis.trustKey },
+      { step: "apply_authoritative_policy", status: "completed", level: analysis.level },
+      { step: "human_control", status: humanControl },
+      { step: "external_side_effect_boundary", status: analysis.level === 3 ? "confirmation_required" : "local_action_only", externalAction: false }
+    ]
+  };
+}
+
+function strandsStepLabel(step) {
+  return {
+    normalize_request: "Normalizza richiesta",
+    lookup_exact_trust: "Cerca fiducia esatta",
+    apply_authoritative_policy: "Applica policy autorevole",
+    human_control: "Controllo umano",
+    external_side_effect_boundary: "Confine effetti esterni"
+  }[step] || step;
+}
+
+function renderStrandsTrace(result) {
+  const badge = document.getElementById("strandsModeBadge");
+  const description = document.getElementById("strandsTraceDescription");
+  const list = document.getElementById("strandsTraceList");
+  const resultBox = document.getElementById("strandsTraceResult");
+  const responseBox = document.getElementById("strandsAgentResponse");
+  const providerStatus = document.getElementById("strandsProviderStatus");
+  const copyButton = document.getElementById("copyStrandsTraceButton");
+  if (!list || !result) return;
+  strandsLastResult = result;
+  const preflight = result.preflight || result;
+  const isLive = result.source === "strands-agent" && result.mode === "strands-sdk";
+  const status = result.providerStatus || {};
+  const state = result.mode || (isLive ? "strands-sdk" : "deterministic-preflight");
+  if (badge) {
+    badge.textContent = isLive ? "agente live" : state === "provider-error" ? "errore provider" : state === "sdk-unavailable" ? "SDK non pronto" : "preflight locale";
+    badge.classList.toggle("active-badge", isLive);
+  }
+  const decision = preflight.decision || {};
+  const trust = preflight.trust || {};
+  if (description) {
+    description.textContent = `Fiducia ${Number(trust.score || decision.trustScore || 0).toFixed(0)}/100 · ${decision.requiresHumanConfirmation ? "serve conferma umana" : "preparazione locale consentita"}. externalAction resta false.`;
+  }
+  const trace = [ ...(Array.isArray(preflight.trace) ? preflight.trace : []) ];
+  if (Array.isArray(result.agentTrace)) trace.push(...result.agentTrace.filter((item) => item.step === "tool_call"));
+  if (Array.isArray(result.toolCalls) && result.toolCalls.length && !result.agentTrace?.length) {
+    result.toolCalls.forEach((item) => trace.push({ step: "tool_call", status: item.status || "completed", tool: item.name }));
+  }
+  list.innerHTML = trace.length ? trace.map((item, index) => {
+    const statusText = String(item.status || "completed");
+    const statusClass = statusText === "required" || statusText.includes("confirmation") ? "warning" : statusText.includes("local") || statusText === "model_requested" ? "local" : statusText === "error" ? "warning" : "completed";
+    const detail = item.key ? ` · ${escapeHTML(item.key)}` : item.level ? ` · livello ${escapeHTML(item.level)}` : item.tool ? ` · ${escapeHTML(item.tool)}` : "";
+    return `<div class="strands-trace-step"><span class="strands-step-index">${index + 1}</span><div><strong>${escapeHTML(strandsStepLabel(item.step))}</strong><small>${escapeHTML(statusText.replaceAll("_", " "))}${detail}</small></div><span class="strands-step-status ${statusClass}">${statusClass === "warning" ? "ATTENZIONE" : statusClass === "local" ? "MODELLO" : "OK"}</span></div>`;
+  }).join("") : `<div class="empty-list-state"><span>◇</span><strong>Nessun trace disponibile</strong><small>Riprova il preflight.</small></div>`;
+  if (resultBox) {
+    const title = decision.level ? `Decisione: livello ${decision.level}` : "Preflight completato";
+    const reason = decision.reason || decision.explanation || "Policy locale applicata.";
+    resultBox.hidden = false;
+    resultBox.innerHTML = `<strong>${escapeHTML(title)}</strong><span>${escapeHTML(reason)}</span><code>externalAction: false</code>`;
+  }
+  if (responseBox) {
+    const response = result.response;
+    responseBox.hidden = !response;
+    if (response) responseBox.innerHTML = `<strong>${isLive ? "Risposta dell’agente Strands" : "Risposta controllata"}</strong><p>${escapeHTML(String(response))}</p><small>${escapeHTML(result.fallbackReason || status.reason || "Tool e confini esterni verificati.")}</small>`;
+  }
+  if (providerStatus) providerStatus.textContent = isLive ? `Provider ${result.provider || "Strands"} pronto · ${result.toolCalls?.length || 0} tool call osservate · nessun effetto esterno.` : (result.fallbackReason || status.reason || "Preflight locale pronto; nessun modello remoto invocato.");
+  if (copyButton) copyButton.disabled = false;
+}
+
+async function requestStrandsPlan(request) {
+  if (backend.authenticated && backend.csrfToken) {
+    return backendRequest("/strands/plan", { method: "POST", body: { request }, csrf: true });
+  }
+  return localStrandsPlan(request);
+}
+
+async function requestStrandsStatus() {
+  if (backend.authenticated && backend.csrfToken) return backendRequest("/strands/status");
+  return localStrandsStatus();
+}
+
+async function requestStrandsInvoke(request) {
+  if (!backend.authenticated || !backend.csrfToken) {
+    return { ...localStrandsPlan(request), mode: "sdk-unavailable", source: "sdk-unavailable", response: "Il modello Strands non è stato invocato: manca un backend autenticato con SDK e provider configurati.", providerStatus: localStrandsStatus(), toolCalls: [], fallbackReason: "Avvia api_server.py --serve-static, accedi e configura HERMES_STRANDS_PROVIDER." };
+  }
+  return backendRequest("/strands/invoke", { method: "POST", body: { request }, csrf: true });
+}
+
+function setupStrandsTrace() {
+  const form = document.getElementById("strandsTraceForm");
+  const input = document.getElementById("strandsTraceInput");
+  const runButton = document.getElementById("runStrandsTraceButton");
+  const invokeButton = document.getElementById("invokeStrandsButton");
+  const statusButton = document.getElementById("checkStrandsStatusButton");
+  const copyButton = document.getElementById("copyStrandsTraceButton");
+  const getRequest = () => input?.value.trim() || "";
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const request = getRequest();
+    if (!request) { showToast("Inserisci una richiesta da analizzare.", "warning"); input?.focus(); return; }
+    if (runButton) { runButton.disabled = true; runButton.textContent = "Analisi…"; }
+    try {
+      const result = await requestStrandsPlan(request);
+      renderStrandsTrace(result);
+      showToast("Preflight completato: il modello non può superare il confine di sicurezza.");
+    } catch (error) {
+      showToast(`Preflight non disponibile: ${backendErrorMessage(error)}`, "warning");
+    } finally {
+      if (runButton) { runButton.disabled = false; runButton.textContent = "Esegui preflight"; }
+    }
+  });
+  invokeButton?.addEventListener("click", async () => {
+    const request = getRequest();
+    if (!request) { showToast("Inserisci una richiesta da analizzare.", "warning"); input?.focus(); return; }
+    invokeButton.disabled = true;
+    invokeButton.textContent = "Invocazione…";
+    try {
+      const result = await requestStrandsInvoke(request);
+      renderStrandsTrace(result);
+      showToast(result.source === "strands-agent" ? "Agente Strands reale completato: tool call registrate." : "Agente reale non pronto: nessuna falsa invocazione è stata mostrata.", result.source === "strands-agent" ? "success" : "info");
+    } catch (error) {
+      showToast(`Invocazione non completata: ${backendErrorMessage(error)}`, "warning");
+    } finally {
+      invokeButton.disabled = false;
+      invokeButton.textContent = "Invoca agente Strands";
+    }
+  });
+  statusButton?.addEventListener("click", async () => {
+    try {
+      const status = await requestStrandsStatus();
+      const badge = document.getElementById("strandsModeBadge");
+      const providerStatus = document.getElementById("strandsProviderStatus");
+      if (badge) { badge.textContent = status.ready ? `provider ${status.provider}` : status.state === "sdk-unavailable" ? "SDK non pronto" : "provider non pronto"; badge.classList.toggle("active-badge", Boolean(status.ready)); }
+      if (providerStatus) providerStatus.textContent = status.reason || "Stato provider verificato.";
+      showToast(status.ready ? `Provider ${status.provider} pronto. Ora puoi invocare l’agente reale.` : (status.reason || "Provider non pronto."), status.ready ? "success" : "info");
+    } catch (error) { showToast(`Stato provider non disponibile: ${backendErrorMessage(error)}`, "warning"); }
+  });
+  copyButton?.addEventListener("click", async () => {
+    if (!strandsLastResult) return;
+    try { await navigator.clipboard.writeText(JSON.stringify(strandsLastResult, null, 2)); showToast("Trace JSON copiato."); }
+    catch { showToast("Copia non disponibile in questo browser.", "warning"); }
+  });
+}
+
 function setupGovernance() {
   const contextInput = document.getElementById("smartContextInput");
   const dndToggle = document.getElementById("smartDndToggle");
@@ -2986,6 +3188,7 @@ function init() {
   setupSettings();
   setupBackendAccount();
   setupIntegrations();
+  setupStrandsTrace();
   setupGovernance();
   setupSimulation();
   setupSearch();

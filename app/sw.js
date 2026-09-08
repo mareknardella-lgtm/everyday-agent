@@ -1,4 +1,4 @@
-const CACHE_NAME = "hermes-ai-shell-v4";
+const CACHE_NAME = "hermes-ai-shell-v5";
 const SHELL = ["/", "/app/", "/app/index.html", "/app/styles.css", "/app/ops-overrides.css", "/app/simulation.css", "/app/app.js",  "/app/manifest.webmanifest",
   "/app/icons/everyday-agent-192.png",
   "/app/icons/everyday-agent-512.png",
@@ -6,7 +6,7 @@ const SHELL = ["/", "/app/", "/app/index.html", "/app/styles.css", "/app/ops-ove
   "/app/icons/everyday-agent-180.png"];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil(Promise.all([caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))), caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL))]).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {

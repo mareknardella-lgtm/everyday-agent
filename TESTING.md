@@ -27,16 +27,18 @@ python3 -m unittest -v
 
 ### Expected Output
 
+The exact count can change as coverage grows. The current suite should finish with a line similar to:
+
 ```
-Ran 53 tests in ~1.7s
+Ran 60 tests in ~2s
 OK
 ```
 
-All 53 tests must pass with zero failures.
+All tests must pass with zero failures.
 
 ### What the Tests Cover
 
-#### `test_everyday_agent.py` — Core Policy Engine (46 tests)
+#### `test_everyday_agent.py` — Core Policy Engine (42 tests)
 
 | Category | Tests | What it verifies |
 |---|---|---|
@@ -76,12 +78,24 @@ All 53 tests must pass with zero failures.
 | **Historical Import** | `test_historical_import_requires_consent_and_advances_cold_start` | Importing past data requires consent, advances calibration |
 | **Rejection Reconsideration** | `test_rejection_can_be_reconsidered_with_new_elements` | Rejected decisions can be revisited with new info |
 
-#### `test_api_server.py` — Backend & Auth (5 tests)
+#### `test_strands_orchestrator.py` — Strands Boundary (provider-aware tests, 6 tests)
+
+| Test | What it verifies |
+|---|---|
+| `test_plan_runs_without_sdk_and_keeps_policy_authoritative` | Deterministic preflight starts at trust 20 and requires confirmation for a new provider |
+| `test_sensitive_request_remains_blocked_even_with_high_trust` | Sensitive-domain caps remain in force even at trust 100 |
+| `test_tool_catalog_is_guarded_and_status_is_explicit` | The five registered tools are visible and external effects remain disabled |
+| `test_provider_status_is_explicit_and_secret_free` | Provider state is `ready` or explicitly unavailable without exposing credentials |
+| `test_invoke_returns_explicit_unavailable_state` | Missing SDK/provider is not presented as a live model invocation |
+| `test_callback_recorder_keeps_only_tool_lifecycle` | Tool names/statuses are observable while arguments and model text are not retained |
+
+#### `test_api_server.py` — Backend & Auth (6 tests)
 
 | Test | What it verifies |
 |---|---|
 | `test_registration_session_and_password_login` | User registration, session cookies, password login |
 | `test_family_permissions_are_server_enforced` | Family permission matrix enforced server-side |
+| `test_strands_preflight_is_safe_and_audited` | Strands status, preflight and fallback invocation are authenticated, audited and effect-free |
 | `test_task_policy_audit_and_execution_gateway` | Task classification → audit → execution gate pipeline |
 | `test_state_is_versioned_and_rejects_secrets` | State versioning, secret rejection |
 | `test_http_auth_cookie_csrf_and_state_round_trip` | HTTP auth, CSRF protection, state persistence |
@@ -114,10 +128,10 @@ All three must exit with code 0 (no output on success).
 ## 3. File Integrity Check
 
 ```bash
-node -e "const fs=require('fs'); const required=['app/index.html','app/app.js','app/styles.css','app/manifest.webmanifest','app/sw.js','preview-server.mjs','everyday_agent.py','api_server.py','lifecycle_simulation.py','test_everyday_agent.py','test_api_server.py','test_lifecycle_simulation.py','README.md','ARCHITECTURE.md','SUBMISSION.md','LICENSE','robots.txt','sitemap.xml']; const missing=required.filter(f=>!fs.existsSync(f)); if(missing.length){console.log('MISSING:',missing.join(', '));process.exit(1)} else console.log('All',required.length,'files present');"
+node -e "const fs=require('fs'); const required=['app/index.html','app/app.js','app/styles.css','app/manifest.webmanifest','app/sw.js','preview-server.mjs','everyday_agent.py','strands_orchestrator.py','requirements-strands.txt','api_server.py','lifecycle_simulation.py','test_everyday_agent.py','test_api_server.py','test_lifecycle_simulation.py','test_strands_orchestrator.py','README.md','ARCHITECTURE.md','SUBMISSION.md','LICENSE','robots.txt','sitemap.xml']; const missing=required.filter(f=>!fs.existsSync(f)); if(missing.length){console.log('MISSING:',missing.join(', '));process.exit(1)} else console.log('All',required.length,'files present');"
 ```
 
-Expected: `All 18 files present`
+Expected: `All 21 files present`
 
 ---
 
@@ -183,7 +197,18 @@ Open: `http://127.0.0.1:4173/`
 - [ ] Audit log shows recent actions
 - [ ] Privacy controls accessible
 
-#### 4.8 Settings
+#### 4.8 Strands orchestration trace
+
+- [ ] Open **Governance** and confirm the `STRANDS ORCHESTRATION` card is visible.
+- [ ] Leave the sample request or enter `Book a repair with a new plumber for €30`.
+- [ ] Click **Esegui preflight** and confirm five steps appear: normalization, exact trust, policy, human control and effect boundary.
+- [ ] Confirm the result shows a cautious new-provider trust score and `externalAction: false`.
+- [ ] Click **Verifica provider**; it must show `ready` only when SDK and Bedrock/Ollama provider are actually configured.
+- [ ] Without backend/provider, click **Invoca agente Strands** and confirm the UI says the invocation did not run; it must not say “live”.
+- [ ] With a local Ollama setup, authenticate to the local backend, click **Invoca agente Strands**, and confirm `source: strands-agent`, provider name and tool calls appear.
+- [ ] Click **Copia JSON** after a trace and confirm the JSON contains `externalAction: false`.
+
+#### 4.9 Settings
 
 - [ ] Settings page loads
 - [ ] Language can be changed
@@ -234,10 +259,12 @@ Navigate to `http://127.0.0.1:4173/site/`
 | GDPR controls | **Fully implemented** |
 | Lifecycle simulation | **Fully implemented** |
 | Adversarial testing | **Fully implemented** |
+| Strands preflight | **Fully implemented, deterministic and effect-free** |
+| Real Strands provider invocation | **Implemented; requires local SDK + Ollama or Bedrock configuration** |
 | Dashboard UI | **Fully implemented** |
 | Landing page + FAQ | **Fully implemented** |
 | PWA + offline cache | **Fully implemented** |
-| Bank account access | **Simulated** |
+| Bank account access | **Not connected; represented only by a blocked connector boundary** |
 | Email integration | **Simulated** |
 | Calendar sync | **Simulated** |
 | Healthcare records | **Simulated** |

@@ -116,7 +116,7 @@
   <!-- Decision boundary -->
   <rect x="520" y="205" width="600" height="565" rx="14" fill="url(#decision)" stroke="#3f879b"/>
   <text x="542" y="234" class="boundary">DECISION BOUNDARY / LOCAL POLICY CORE</text>
-  <text x="542" y="255" class="small">everyday_agent.py · trust is a signal, never a permission</text>
+  <text x="542" y="255" class="small">everyday_agent.py · trust is a signal, never a permission · real Strands boundary when provider is ready</text>
 
   <rect x="542" y="276" width="170" height="76" class="box" fill="#164152" stroke="#55bdd2"/>
   <text x="558" y="300" class="nodeTitle">Task intake</text>
@@ -199,9 +199,9 @@
   <text x="682" y="855" class="small">api_server.py · stdlib HTTP · externalActions=false</text>
 
   <rect x="682" y="878" width="126" height="82" class="box" fill="#2b2945" stroke="#9a84ca"/>
-  <text x="698" y="902" class="nodeTitle">HTTP routes</text>
-  <text x="698" y="921" class="nodeText">auth · state</text>
-  <text x="698" y="938" class="nodeText">tasks · audit</text>
+  <text x="698" y="902" class="nodeTitle">HTTP + Strands routes</text>
+  <text x="698" y="921" class="nodeText">auth · state · preflight</text>
+  <text x="698" y="938" class="nodeText">tasks · guarded invoke</text>
 
   <rect x="826" y="878" width="126" height="82" class="box" fill="#2b2945" stroke="#9a84ca"/>
   <text x="842" y="902" class="nodeTitle">Session security</text>

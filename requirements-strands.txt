@@ -1,0 +1,19 @@
+# Optional real model orchestration for Hermes AI.
+# The dependency-free policy demo does not need these packages.
+strands-agents>=1.0.0
+
+# Install this extra only for a local Ollama provider:
+# pip install "strands-agents[ollama]"
+
+# Optional provider-specific packages are resolved by the SDK. For Bedrock,
+# boto3 credentials are resolved by the normal AWS chain; never commit them.
+
+# Provider selection:
+#   HERMES_STRANDS_PROVIDER=ollama
+#   HERMES_STRANDS_OLLAMA_HOST=http://127.0.0.1:11434
+#   HERMES_STRANDS_OLLAMA_MODEL=llama3.1
+# or:
+#   HERMES_STRANDS_PROVIDER=bedrock
+#   HERMES_STRANDS_ALLOW_CLOUD=true
+#   HERMES_STRANDS_BEDROCK_MODEL=global.anthropic.claude-sonnet-4-6
+#   AWS_DEFAULT_REGION=us-west-2

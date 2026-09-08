@@ -15,6 +15,7 @@ const files = [
   'LEGAL_COMPLIANCE_BASELINE.md',
   'ARCHITECTURE.md',
   'everyday_agent.py',
+  'strands_orchestrator.py',
   'ai-server.mjs',
   'api_server.py',
   'README.md',

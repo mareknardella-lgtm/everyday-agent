@@ -37,6 +37,7 @@ from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple
 from urllib.parse import urlparse
 
 from everyday_agent import AgentConfig, AutonomyLevel, EverydayAgent, Memory, Task
+from strands_orchestrator import HermesStrandsOrchestrator
 
 
 API_PREFIX = "/api"
@@ -612,6 +613,33 @@ class AgentBackend:
         config = AgentConfig(family_permissions=self.permission_matrix(workspace_id))
         return EverydayAgent(config, memory)
 
+    def strands_status(self, context: SessionContext) -> Dict[str, Any]:
+        """Expose optional Strands capability without exposing credentials or actions."""
+        return HermesStrandsOrchestrator(self._agent_for_workspace(context.workspace_id)).status()
+
+    def strands_plan(self, context: SessionContext, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Run a deterministic Strands boundary preflight for the current workspace."""
+        request = payload.get("request", payload.get("task", payload.get("message")))
+        if request is None:
+            raise APIError(HTTPStatus.UNPROCESSABLE_ENTITY, "strands_request_required", "Inserisci request, task o message.")
+        if not isinstance(request, (str, dict)):
+            raise APIError(HTTPStatus.UNPROCESSABLE_ENTITY, "invalid_strands_request", "La richiesta Strands deve essere testo o oggetto JSON.")
+        orchestrator = HermesStrandsOrchestrator(self._agent_for_workspace(context.workspace_id))
+        result = orchestrator.plan(request)
+        self.append_audit(context.workspace_id, context.user_id, "strands_policy_preflight", {"trust_key": result["trust"]["key"], "level": result["decision"]["level"], "external_action": False})
+        return result
+
+    def strands_invoke(self, context: SessionContext, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Optionally invoke Strands after the same mandatory deterministic preflight."""
+        request = payload.get("request", payload.get("task", payload.get("message")))
+        if request is None:
+            raise APIError(HTTPStatus.UNPROCESSABLE_ENTITY, "strands_request_required", "Inserisci request, task o message.")
+        if not isinstance(request, (str, dict)):
+            raise APIError(HTTPStatus.UNPROCESSABLE_ENTITY, "invalid_strands_request", "La richiesta Strands deve essere testo o oggetto JSON.")
+        result = HermesStrandsOrchestrator(self._agent_for_workspace(context.workspace_id)).invoke(request)
+        self.append_audit(context.workspace_id, context.user_id, "strands_invocation", {"source": result.get("source"), "external_action": False})
+        return result
+
     @staticmethod
     def _decision_payload(decision: Any) -> Dict[str, Any]:
         return {
@@ -884,6 +912,9 @@ class APIHandler(BaseHTTPRequestHandler):
             if path == "/api/health":
                 self.send_json(HTTPStatus.OK, {"status": "ok", "mode": "local-development", "externalActions": False})
                 return
+            if path == "/api/strands/status":
+                self.send_json(HTTPStatus.OK, self.backend.strands_status(self.require_session()))
+                return
             if path == "/api/session":
                 context = self.backend.session_from_cookie(self.headers.get("Cookie"))
                 payload = self.backend.session_payload(context)
@@ -934,6 +965,12 @@ class APIHandler(BaseHTTPRequestHandler):
                 context = self.require_session(csrf=True)
                 self.backend.logout(context)
                 self.send_json(HTTPStatus.OK, {"authenticated": False}, cookies=[self.session_cookie("", clear=True)])
+                return
+            if path == "/api/strands/plan":
+                self.send_json(HTTPStatus.OK, self.backend.strands_plan(self.require_session(csrf=True), payload))
+                return
+            if path == "/api/strands/invoke":
+                self.send_json(HTTPStatus.OK, self.backend.strands_invoke(self.require_session(csrf=True), payload))
                 return
             if path == "/api/members":
                 self.send_json(HTTPStatus.CREATED, self.backend.add_member(self.require_session(csrf=True), payload))

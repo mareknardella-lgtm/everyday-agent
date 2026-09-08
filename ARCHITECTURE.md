@@ -30,6 +30,9 @@ flowchart TB
     PROFILE[(Trust profiles\nscore · outcomes · latency\nlast interaction · decay)]
     IMPORT[Similar-domain import\ndiscounted proposal\nnever Level 1 by default]
     POLICY[Policy gate / precedence\nfraud · hard caps · sensitive data\nconsent · family role · manual mode\nDND · urgency · reversibility]
+    STRANDS[Real Strands Agent when ready\nBedrock or Ollama provider\nno credentials in tools / no effects]
+    PROVIDER[Provider readiness\nSDK + model + privacy opt-in\nready / unavailable / error]
+    TOOLS[Guarded tools\nnormalize · trust lookup\npolicy · explain · local draft]
     CLASSIFY[Decision output\nprepared · digest · confirmation]
     EXPLAIN[Explainability\nrule applied · trust score\ncontext · default outcome]
     RECOVERY[Recovery controls\nundo / redo concept\nrollback guidance · crisis mode]
@@ -89,6 +92,10 @@ flowchart TB
   PROFILE --> POLICY
   COMMANDS --> POLICY
   POLICY --> CLASSIFY
+  POLICY -. mandatory preflight .-> STRANDS
+  STRANDS --> PROVIDER
+  STRANDS --> TOOLS
+  TOOLS --> CLASSIFY
   CLASSIFY --> EXPLAIN
   CLASSIFY --> RECOVERY
   CLASSIFY --> GATEWAY
@@ -131,10 +138,10 @@ flowchart TB
 |---|---|---|---|---|
 | Client | Dashboard shell | `app/index.html`, `app/styles.css`, `app/ops-overrides.css` | Dark, data-dense operational interface | Implemented locally |
 | Client | Application state | `app/app.js` | Navigation, onboarding, task flows, local persistence and UI rendering | Implemented locally |
-| Client | PWA shell | `app/manifest.webmanifest`, `app/sw.js` | Install metadata and offline shell caching | Implemented locally; browser-dependent |
+| Client | Governance Strands trace | `app/index.html`, `app/app.js`, `app/ops-overrides.css` | Visible preflight, provider readiness, real-invocation result and privacy-safe tool lifecycle; `externalAction=false` proof | Implemented locally |
 | Decision | Task intake | `everyday_agent.py: Task` and `EverydayAgent` | Normalize the request and its risk signals | Implemented locally |
 | Decision | Dynamic Trust Engine | `everyday_agent.py: DynamicTrustEngine` | Score each action/counterparty/context tuple; decay and cautious import | Implemented and tested |
-| Decision | Policy gate | `everyday_agent.py: EverydayAgent` | Apply safety precedence, consent, roles, caps and manual mode | Implemented and tested |
+| Decision | Strands orchestration boundary | `strands_orchestrator.py` | Run a real Strands Agent with Bedrock/Ollama when ready; record privacy-safe tool lifecycle; never cross external effect boundary | Implemented with explicit provider readiness states |
 | Persistence | Memory | `everyday_agent.py: Memory` | Preferences, patterns, trust profiles, consent, KPI and recovery history | Implemented locally |
 | Persistence | Audit | `Memory.record_audit()` and `api_server.py: append_audit()` | Hash-linked explanation and event history | Local prototype implementation |
 | Backend | Optional API | `api_server.py` | Local auth, workspace state, tasks and authorization | Implemented locally; development only |
@@ -158,8 +165,16 @@ Line references may move as the prototype evolves; class and file names are the 
 8. **Record:** the event is written to local memory and the hash-linked audit history. The optional API writes the equivalent workspace event to SQLite.
 9. **Learn:** only the relevant trust profile is updated. Fast approvals increase confidence, delayed approvals increase it less, rejection reduces it sharply and execution errors reduce the affected combination while opening crisis handling.
 10. **Recover:** supported local flows expose undo/redo concepts and rollback guidance. Irreversible external actions remain subject to provider-specific recovery and human review.
+11. **Orchestrate safely:** the deterministic preflight runs first. If the SDK and selected provider are ready, Strands runs a real `Agent` with guarded read-only/local-draft tools and a callback recorder that retains only lifecycle labels and tool names. It cannot override the policy result, infer consent or trigger an external connector. If readiness fails, Hermes returns an explicit `sdk-unavailable`, `provider-unavailable` or `provider-error` result instead of pretending that a model ran.
 
-## Trust calculation model
+## Strands orchestration boundary
+
+The Governance view mirrors this boundary for the reviewer: **normalize request → lookup exact trust → apply authoritative policy → human control → external side-effect boundary**. It can call the authenticated local API for the preflight or the real provider invocation. The browser can show only a clearly labelled unavailable state; it never fabricates tool calls or a live model response. The trace is evidence of the control flow, not a claim that a real payment, booking or message was executed.
+
+`strands_orchestrator.py` follows the Strands Agents Python pattern (`from strands import Agent, tool`) and supports the documented `BedrockModel` and `OllamaModel` providers. `provider_status()` checks SDK/provider readiness without returning secrets; `build_agent()` creates the actual Strands Agent; `StrandsTraceRecorder` captures callback events and guarded tool lifecycle. The sequence is fixed: normalize → exact trust lookup → policy gate → human-control explanation → local draft boundary. The SDK is never granted payment, email, calendar, health or shell tools. No model response can turn `externalAction` into `true`.
+
+The package is listed separately in `requirements-strands.txt` so the public Railway/static prototype remains dependency-free. For a real invocation, select `ollama` for a local model or `bedrock` with the explicit `HERMES_STRANDS_ALLOW_CLOUD=true` opt-in. Bedrock additionally requires AWS model access, IAM permissions, provider configuration, monitoring and a separate security review. The UI reports readiness honestly; it never treats the browser preflight as a live model call.
+
 
 The core profile is scoped to a precise tuple:
 
@@ -211,7 +226,7 @@ Browser -> authenticated state/task request
       -> hash-linked audit event
 ```
 
-The API currently provides local development routes for health, session, state, permissions, members, tasks, task approval/rejection/defer, consent, execution requests and audit inspection. The server intentionally reports `externalActions: false`.
+The API currently provides local development routes for health, session, state, permissions, members, tasks, task approval/rejection/defer, consent, execution requests, Strands status/preflight/invocation and audit inspection. `/api/strands/status` reports provider readiness; `/api/strands/invoke` invokes the real provider only when ready and returns tool lifecycle metadata. The server intentionally reports `externalActions: false`.
 
 Production gaps are documented rather than hidden: TLS termination, managed secrets, rate limiting, encrypted backups, key rotation, immutable audit storage, provider contracts, connector isolation, monitoring, incident response and a legal/privacy review are still required.
 

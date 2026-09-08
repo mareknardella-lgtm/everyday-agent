@@ -6,7 +6,7 @@ Hermes AI is a trust-first personal operating system for people and families who
 
 Its differentiator is the **Dynamic Trust Engine**. Instead of using a generic rule such as “ask above €50”, it calculates a separate 0–100 trust score for each combination of action, counterparty and context. A new combination starts at 20/100. Fast approvals raise trust, slow responses raise it less, rejections reduce it sharply and inactivity makes trust decay toward the cautious baseline. Safety caps, consent, family permissions and manual mode always override trust.
 
-The current submission is an offline local prototype. It includes working local interactions, persistence, governance controls, a deterministic multi-role lifecycle simulation and automated tests. External banking, email, healthcare, booking and payment integrations are intentionally not enabled.
+The current submission is an offline local prototype. It includes working local interactions, persistence, governance controls, a deterministic multi-role lifecycle simulation, a provider-aware Strands Agents orchestration boundary with guarded tools, and automated tests. External banking, email, healthcare, booking and payment integrations are intentionally not enabled.
 
 ## Who is it for?
 
@@ -19,9 +19,13 @@ The current submission is an offline local prototype. It includes working local 
 
 Traditional assistants optimize for more features or more engagement. Hermes AI optimizes for useful silence: it handles low-risk work without unnecessary interruption and surfaces only decisions that genuinely need a person. Trust becomes personal, explainable and reversible instead of being a fixed threshold applied to everyone.
 
+## Real Strands orchestration
+
+The Governance view has a preflight button and a separate **Invoke Strands Agent** button. The latter calls the authenticated local Python API and runs a real Strands `Agent` with Bedrock or Ollama only when the SDK, provider and privacy settings are ready. The UI reports `sdk-unavailable`, `provider-unavailable` or `provider-error` honestly; it never turns a deterministic browser preflight into a fake model trace. On a ready run, the callback recorder exposes only tool names and lifecycle statuses, while every tool remains read-only or local-draft and `externalAction=false`.
+
 ## How to run
 
-Requirements: Node.js 18+ and Python 3.11+. No npm dependencies are required.
+Requirements: Node.js 18+ and Python 3.11+. No npm dependencies are required for the core demo.
 
 ```bash
 node preview-server.mjs
@@ -58,8 +62,9 @@ py -3 lifecycle_simulation.py --days 365 --seed 20260831 --output simulation-rep
 3. Show the cautious 20/100 trust profile and confirmation request.
 4. Approve or reject the request and show the profile update.
 5. Open the Control Feed, calendar and time tracker.
-6. Open Governance and run a personalized six- or twelve-month pre-launch simulation.
-7. Show the report metrics, contradictions and downloadable log.
+6. Open Governance, run **Esegui preflight**, then click **Invoca agente Strands**. In the configured local environment show `source: strands-agent`, the provider and observed guarded tool calls; in every case show `normalize → exact trust → policy gate → human control → externalAction=false`.
+7. Open Governance and run a personalized six- or twelve-month pre-launch simulation.
+8. Show the report metrics, contradictions and downloadable log.
 
 ### 2:25–3:15 — Safety and governance
 

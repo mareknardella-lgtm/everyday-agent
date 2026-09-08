@@ -84,6 +84,24 @@ class AgentBackendTests(unittest.TestCase):
         self.assertEqual(teen_error.exception.code, "minor_permission_blocked")
         self.assertEqual(partner_context.workspace_id, owner.workspace_id)
 
+    def test_strands_preflight_is_safe_and_audited(self):
+        _, _, owner = self.register_owner("strands@example.test")
+        status = self.backend.strands_status(owner)
+        self.assertIn("normalize_request", status["toolCatalog"])
+        self.assertFalse(status["externalActions"])
+
+        plan = self.backend.strands_plan(
+            owner,
+            {"request": "Prenota una riparazione con un idraulico nuovo per 30 euro"},
+        )
+        self.assertEqual(plan["decision"]["level"], 3)
+        self.assertEqual(plan["trust"]["score"], 20.0)
+        self.assertFalse(plan["externalAction"])
+        invoked = self.backend.strands_invoke(owner, {"request": "Aggiorna la lista della spesa"})
+        self.assertIn(invoked["source"], {"sdk-unavailable", "provider-unavailable", "provider-error", "strands-agent"})
+        self.assertFalse(invoked["externalAction"])
+        self.assertTrue(self.backend.verify_audit(owner.workspace_id))
+
     def test_task_policy_audit_and_execution_gateway(self):
         _, _, owner = self.register_owner()
         created = self.backend.create_task(
